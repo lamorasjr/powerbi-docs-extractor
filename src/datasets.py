@@ -7,10 +7,7 @@ PBI_WORKSPACE_ID = os.getenv('PBI_WORKSPACE_ID')
 BASE_URL = 'https://api.powerbi.com/v1.0/myorg/'
 ENDPOINT = f'groups/{PBI_WORKSPACE_ID}/datasets'
 
-api_headers = {
-        'Authorization' : f'Bearer {PBI_API_TOKEN}'
-    }
-
+api_headers = { 'Authorization' : f'Bearer {PBI_API_TOKEN}'}
 api_url = BASE_URL + ENDPOINT
 
 def get_api_data(url, headers):
