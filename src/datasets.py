@@ -16,16 +16,8 @@ def get_api_data(url, headers):
     data = json_data['value']
     return data
 
-def load_to_df(data):
-    df = pd.DataFrame(data)
-    return df
-
-def export_csv(df):
-    df.to_csv('data/datasets.csv', index=False)
-
-
 def pipeline_datasets():
     datasets = get_api_data(api_url, api_headers)
-    df = load_to_df(datasets)
-    export_csv(df)
+    df = pd.DataFrame(datasets)
+    df.to_csv('data/datasets.csv', index=False)
     print('The datasets pipeline is successfully completed.')
