@@ -12,12 +12,11 @@ api_url = BASE_URL + ENDPOINT
 
 def get_api_data(url, headers):
     response = requests.get(url, headers=headers)
-    json_data = response.json()
-    data = json_data['value']
+    data = response.json()
     return data
 
 def pipeline_datasets():
     datasets = get_api_data(api_url, api_headers)
-    df = pd.DataFrame(datasets)
+    df = pd.json_normalize(datasets, record_path=['value'])
     df.to_csv('data/datasets.csv', index=False)
     print('The datasets pipeline is successfully completed.')
