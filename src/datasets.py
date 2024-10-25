@@ -18,5 +18,5 @@ def get_api_data(url, headers):
 def pipeline_datasets():
     datasets = get_api_data(api_url, api_headers)
     df = pd.json_normalize(datasets, record_path=['value'])
-    df.to_csv('data/datasets.csv', index=False)
-    print('The datasets pipeline is successfully completed.')
+    df.to_csv('data/datasets.csv', index=False, sep=';')
+    print('The datasets pipeline has been completed successfully.')
