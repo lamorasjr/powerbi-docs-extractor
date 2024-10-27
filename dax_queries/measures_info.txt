@@ -1,0 +1,16 @@
+EVALUATE
+SELECTCOLUMNS(
+    INFO.MEASURES(),
+	"Measure Id", [ID],
+	"Measure Name", [Name],
+	"Table Id", [TableID],
+	"Description", [Description],
+	"Data Type Id", [DataType],
+	"Data Type", SWITCH(
+					[DataType], 
+					6, "Whole Number",
+					8, "Decimal Number"
+				),
+	"Is Hidden", [IsHidden],
+	"Modified Time", [ModifiedTime]
+)
