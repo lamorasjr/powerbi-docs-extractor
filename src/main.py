@@ -1,12 +1,16 @@
-from etl_pbi import export_pbi_in_group, get_datasets_ids
-from etl_pbi_info import etl_pbi_info
+import pandas as pd
+import warnings
+from etl import etl_pbi_tables
 
-pbi_objects = ["datasets", "dataflows", "dashboards", "reports"]
-dataset_ids = get_datasets_ids()
-dax_query = 'EVALUATE INFO.MEASURES()'
-file_name = 'measures_info'
+output_path = 'data/'
 
-for i in pbi_objects:
-    export_pbi_in_group(i)
+# Ignore specific FutureWarning
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
-etl_pbi_info(dataset_ids, dax_query, file_name)
+pbi_dfs = etl_pbi_tables()
+
+with pd.ExcelWriter(f'{output_path}/powerbi_data_catalog.xlsx') as writer:
+    for sheet_name, df in pbi_dfs.items():
+        df.to_excel(writer, sheet_name=sheet_name, index=False)
+
+print('The powerbi_data_catalog.xlsx file has been exported successfully')
