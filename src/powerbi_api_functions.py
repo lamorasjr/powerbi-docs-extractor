@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 
 # Extract list of datasets contained in the Power BI Workspace
-def get_datasets_in_workspace(access_token:str, workspace_id:str):
+def get_datasets_in_workspace(access_token:str, workspace_id:str) -> pd.DataFrame:
     """
     Function to extract all datasets contained in a given Power BI workspace.
     """
@@ -22,7 +22,7 @@ def get_datasets_in_workspace(access_token:str, workspace_id:str):
         print(f'Non-success status code: {err}')
 
 
-def get_datasets_dax_info(access_token:str, workspace_id:str, dataset_id:str, dax_query:str):
+def get_datasets_dax_info(access_token:str, workspace_id:str, dataset_id:str, dax_query:str) -> pd.DataFrame:
     """
     Function to execute a given DAX query into a given Power BI dataset in a specific workspace.
     """
