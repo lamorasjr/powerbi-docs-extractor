@@ -1,6 +1,5 @@
 import os
 import requests
-import pandas as pd
 
 # Extract list of datasets contained in the Power BI Workspace
 def get_datasets_in_workspace(access_token:str, workspace_id:str):
@@ -10,16 +9,14 @@ def get_datasets_in_workspace(access_token:str, workspace_id:str):
     url = f'https://api.powerbi.com/v1.0/myorg/groups/{workspace_id}/datasets'
     headers = { 'Authorization' : f'Bearer {access_token}'}
 
-    try:
-        response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers)
 
-        data = response.json()
-        df = pd.json_normalize(data, record_path=['value'])
-        df['Semantic Model Id'] = workspace_id
-        return df
-    
-    except Exception as err:
-        print(f'Non-success status code: {err}')
+    if response.status_code == 200:
+        response_json = response.json()
+        data = response_json['value']
+        return data
+    else:
+        raise Exception(f'Non-success status code: {response.status_code}')
 
 
 def get_datasets_dax_info(access_token:str, workspace_id:str, dataset_id:str, dax_query:str):
@@ -38,15 +35,15 @@ def get_datasets_dax_info(access_token:str, workspace_id:str, dataset_id:str, da
         'serializerSettings': {'includeNulls': 'true'}
     }
 
-    try:
-        response = requests.post(url, headers=headers, json=body)
-
-        data = response.json()
-        df = pd.json_normalize(data, record_path=['results', 'tables', 'rows'])
-        return df
+    response = requests.post(url, headers=headers, json=body)
     
-    except Exception as err :
-        print(f'Non-success status code: {err}')
+    if response.status_code == 200:
+        response_json = response.json()
+        data = response_json['results'][0]['tables'][0]['rows']
+        return data
+    else:
+        raise Exception(f'Non-sucess status code: {response.status_code}')
+        
 
 
 if __name__ == '__main__':
@@ -55,16 +52,12 @@ if __name__ == '__main__':
     pbi_sample_dataset_id = os.getenv('SAMPLE_DATASET_ID')
     pbi_sample_dax_query = 'EVALUATE INFO.TABLES()'
 
-    df_datasets = get_datasets_in_workspace(access_token=pbi_access_token, workspace_id=pbi_workspace_id)
-    # print(df_datasets.head())
-    # df_datasets.to_csv('data/pbi_datasets.csv', index=False)
-    print('Datasets successfully extracted.')
+    pbi_datasets = get_datasets_in_workspace(access_token=pbi_access_token, workspace_id=pbi_workspace_id)
+    # print(pbi_datasets)
     
 
-    df_dataset_tables = get_datasets_dax_info(access_token=pbi_access_token, 
+    pbi_tables = get_datasets_dax_info(access_token=pbi_access_token, 
                                       workspace_id=pbi_workspace_id, 
                                       dataset_id = pbi_sample_dataset_id, 
                                       dax_query=pbi_sample_dax_query)
-    # print(df_dataset_tables.head())
-    # df_dataset_tables.to_csv('data/pbi_dataset_tables.csv', index=False)
-    print('Dataset tables successfully extracted.')
+    # print(pbi_tables)
