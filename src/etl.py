@@ -23,7 +23,11 @@ def etl_pbi_datasets():
 # ETL function for pbi dataset measures
 # ETL function for pbi dataset relationships
 
+def export_pbi_raw_data():
+    df_datasets.to_csv('raw_data/pbi_datasets_raw.csv', index=False, sep=';', encoding='utf-8')
+
+    print('The raw data files were exported successfully')
+
 if __name__ == '__main__':
     df_datasets = etl_pbi_datasets()
-    df_datasets.to_csv('raw_data/pbi_datasets_raw.csv', index=False, sep=';', encoding='utf-8')
-    print('Datasets exported successfully')
+    export_pbi_raw_data()
