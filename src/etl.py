@@ -9,13 +9,14 @@ def etl_pbi_datasets():
     """
     data = get_datasets_in_workspace()
     df = pd.json_normalize(data)
+    df_etl = df.copy()
+    df_etl['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
     df_etl = df[['id', 'name', 'webUrl', 'createdDate']]
     df_etl = df_etl.rename(columns={'id':'DATASET_ID',
                                     'name':'DATASET_NAME',
                                     'webUrl':'WEB_URL',
                                     'createdDate':'CREATED_AT'})
     df_etl['CREATED_AT'] = pd.to_datetime(df_etl['CREATED_AT']).dt.date
-    df_etl['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
     return df_etl
 
 # ETL function for pbi dataset tables
@@ -28,7 +29,31 @@ def etl_pbi_tables(dataset_id:str):
 
     data = get_datasets_dax_info(dataset_id=dataset_id, dax_query=dax_query)
     df = pd.json_normalize(data)
-    return df
+    df_etl = df.copy()
+    df_etl['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
+    df_etl['DATASET_ID'] = dataset_id
+    df_etl = df_etl.rename(columns={'[Table Id]':'TABLE_ID',
+                                    '[Table Name]':'TABLE_NAME',
+                                    '[Data Category]':'DATA_CATEGORY',
+                                    '[Description]':'DESCRIPTION',
+                                    '[Is Hidden]':'IS_HIDDEN',
+                                    '[Modified Time]':'MODIFIED_AT',
+                                    '[Table Type]':'TABLE_TYPE',
+                                    '[Calculation Group Flag]':'CALCULATION_GROUP_FLAG',
+                                    '[Query Definition]':'QUERY_DEFINITION'})
+    df_etl['MODIFIED_AT'] = pd.to_datetime(df_etl['MODIFIED_AT']).dt.date
+    df_etl = df_etl[['DATASET_ID', 
+                     'TABLE_ID',
+                     'TABLE_NAME',
+                     'DESCRIPTION',
+                     'DATA_CATEGORY',
+                     'TABLE_TYPE',
+                     'CALCULATION_GROUP_FLAG',
+                     'QUERY_DEFINITION',
+                     'IS_HIDDEN',
+                     'MODIFIED_AT',
+                     'SYS_TIMESTAMP']]
+    return df_etl
 
 
 # ETL function for pbi dataset columns
@@ -76,22 +101,23 @@ if __name__ == '__main__':
     test_dataset = df_datasets['DATASET_ID'].iloc[0]
     
     df_tables = etl_pbi_tables(dataset_id=test_dataset)
-    # print(df_tables.head(2))
-
-    df_columns = etl_pbi_columns(dataset_id=test_dataset)
-    # print(df_columns.head(2))
-    
-    df_measures = etl_pbi_measures(dataset_id=test_dataset)
-    # print(df_measures.head(2))
-    
-    df_relationships = etl_pbi_relationships(dataset_id=test_dataset)
-    # print(df_relationships.head(2))
-
-
-    # Export raw data to csv
-    df_datasets.to_csv('data_raw/pbi_datasets_raw.csv', index=False, sep=';', encoding='utf-8')
+    # print(df_tables.head())
     df_tables.to_csv('data_raw/pbi_tables_raw.csv', index=False, sep=';', encoding='utf-8')
-    df_columns.to_csv('data_raw/pbi_columns_raw.csv', index=False, sep=';', encoding='utf-8')
-    df_measures.to_csv('data_raw/pbi_measures_raw.csv', index=False, sep=';', encoding='utf-8')
-    df_relationships.to_csv('data_raw/pbi_relationships_raw.csv', index=False, sep=';', encoding='utf-8')
-    print('The raw data files were exported successfully')
+
+    # df_columns = etl_pbi_columns(dataset_id=test_dataset)
+    # # print(df_columns.head(2))
+    
+    # df_measures = etl_pbi_measures(dataset_id=test_dataset)
+    # # print(df_measures.head(2))
+    
+    # df_relationships = etl_pbi_relationships(dataset_id=test_dataset)
+    # # print(df_relationships.head(2))
+
+
+    # # Export raw data to csv
+    # df_datasets.to_csv('data_raw/pbi_datasets_raw.csv', index=False, sep=';', encoding='utf-8')
+
+    # df_columns.to_csv('data_raw/pbi_columns_raw.csv', index=False, sep=';', encoding='utf-8')
+    # df_measures.to_csv('data_raw/pbi_measures_raw.csv', index=False, sep=';', encoding='utf-8')
+    # df_relationships.to_csv('data_raw/pbi_relationships_raw.csv', index=False, sep=';', encoding='utf-8')
+    # print('The raw data files were exported successfully')
