@@ -19,7 +19,7 @@ def get_datasets_in_workspace():
         data = response_json['value']
         return data
     else:
-        raise Exception(f'Non-success status code: {response.status_code}')
+        raise Exception(f'Non-success status code: {response.status_code} - {response.text}')
 
 
 def get_datasets_dax_info(dataset_id:str, dax_query:str):
@@ -45,7 +45,7 @@ def get_datasets_dax_info(dataset_id:str, dax_query:str):
         data = response_json['results'][0]['tables'][0]['rows']
         return data
     else:
-        raise Exception(f'Non-sucess status code: {response.status_code}')
+        raise Exception(f'Non-sucess status code: {response.status_code} - {response.text}')
         
 
 
