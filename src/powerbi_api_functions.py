@@ -46,15 +46,3 @@ def get_datasets_dax_info(dataset_id:str, dax_query:str):
         return data
     else:
         raise Exception(f'Non-sucess status code: {response.status_code} - {response.text}')
-        
-
-
-if __name__ == '__main__':
-    test_dax_query = 'EVALUATE INFO.TABLES()'
-
-    pbi_datasets = get_datasets_in_workspace()
-    # print(pbi_datasets)
-
-    test_dataset = pbi_datasets[0]['id']
-    pbi_tables = get_datasets_dax_info(dataset_id=test_dataset, dax_query=test_dax_query)
-    # print(pbi_tables)
