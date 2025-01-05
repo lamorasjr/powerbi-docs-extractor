@@ -18,6 +18,5 @@ SELECTCOLUMNS(
 	"Is Active?", [IsActive],
 	"Security Filtering Behavior Id", [SecurityFilteringBehavior],
 	"Security Filtering Behavior", SWITCH([SecurityFilteringBehavior], 1, "Single", 2, "Both", BLANK()),
-	"Modified Time", [ModifiedTime],
-	"Relationship Code", [Name]
+	"Modified Time", [ModifiedTime]
 )
