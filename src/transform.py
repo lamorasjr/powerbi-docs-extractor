@@ -145,7 +145,42 @@ def etl_pbi_relationships(dataset_id:str):
 
     data = get_datasets_dax_info(dataset_id=dataset_id, dax_query=dax_query)
     df = pd.json_normalize(data)
-    return df
+    df_etl = df.copy()
+    df_etl['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
+    df_etl['DATASET_ID'] = dataset_id
+    df_etl = df_etl.rename(columns={'[Relationship Id]':'RELATIONSHIP_ID',
+                                    '[Relationship]':'RELATIONSHIP',
+                                    '[From Table Id]':'FROM_TABLE_ID',
+                                    '[From Column Id]':'FROM_COLUMN_ID',
+                                    '[From Cardinality Id]':'FROM_CARDINALITY_ID',
+                                    '[From Cardinality]':'FROM_CARDINALITY',
+                                    '[To Table Id]':'TO_TABLE_ID',
+                                    '[To Column Id]':'TO_COLUMN_ID',
+                                    '[To Cardinality Id]':'TO_CARDINALITY_ID',
+                                    '[To Cardinality]':'TO_CARDINALITY',
+                                    '[Cross Filtering Behavior Id]':'CROSS_FILTERING_BEHAVIOR_ID',
+                                    '[Cross Filtering Behavior]':'CROSS_FILTERING_BEHAVIOR',
+                                    '[Is Active?]':'IS_ACTIVE',
+                                    '[Security Filtering Behavior Id]':'SECURITY_FILTERING_BEHAVIOR_ID',
+                                    '[Security Filtering Behavior]':'SECURITY_FILTERING_BEHAVIOR',
+                                    '[Modified Time]':'MODIFIED_AT'})
+    df_etl['MODIFIED_AT'] = pd.to_datetime(df_etl['MODIFIED_AT']).dt.date
+    df_etl = df_etl[['DATASET_ID',
+                     'RELATIONSHIP_ID',
+                     'RELATIONSHIP',
+                     'IS_ACTIVE',
+                     'FROM_TABLE_ID',
+                     'FROM_COLUMN_ID',
+                     'FROM_CARDINALITY',
+                     'TO_TABLE_ID',
+                     'TO_COLUMN_ID', 
+                     'TO_CARDINALITY',
+                     'CROSS_FILTERING_BEHAVIOR',
+                     'SECURITY_FILTERING_BEHAVIOR',     
+                     'MODIFIED_AT',
+                     'SYS_TIMESTAMP', 
+                     ]]
+    return df_etl
 
 if __name__ == '__main__':
     df_datasets = etl_pbi_datasets()
@@ -161,18 +196,10 @@ if __name__ == '__main__':
     # print(df_columns.info())
     # df_columns.to_csv('data_raw/pbi_columns_raw.csv', index=False, sep=';', encoding='utf-8')
     
-    df_measures = etl_pbi_measures(dataset_id=test_dataset)
-    print(df_measures.info())
-    df_measures.to_csv('data_raw/pbi_measures_raw.csv', index=False, sep=';', encoding='utf-8')
-    
-    # df_relationships = etl_pbi_relationships(dataset_id=test_dataset)
-    # # print(df_relationships.head(2))
-
-
-    # # Export raw data to csv
-    # df_datasets.to_csv('data_raw/pbi_datasets_raw.csv', index=False, sep=';', encoding='utf-8')
-
-    # df_columns.to_csv('data_raw/pbi_columns_raw.csv', index=False, sep=';', encoding='utf-8')
+    # df_measures = etl_pbi_measures(dataset_id=test_dataset)
+    # print(df_measures.info())
     # df_measures.to_csv('data_raw/pbi_measures_raw.csv', index=False, sep=';', encoding='utf-8')
-    # df_relationships.to_csv('data_raw/pbi_relationships_raw.csv', index=False, sep=';', encoding='utf-8')
-    # print('The raw data files were exported successfully')
+    
+    df_relationships = etl_pbi_relationships(dataset_id=test_dataset)
+    print(df_relationships.iloc[0])
+    df_relationships.to_csv('data_raw/pbi_relationships_raw.csv', index=False, sep=';', encoding='utf-8')
