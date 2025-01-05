@@ -1,16 +1,24 @@
 EVALUATE
 SELECTCOLUMNS(
-    INFO.MEASURES(),
+	FILTER(
+		INFO.MEASURES(),
+		[IsHidden] = FALSE() &&
+		[IsSimpleMeasure] = FALSE()
+	),
 	"Measure Id", [ID],
-	"Measure Name", [Name],
 	"Table Id", [TableID],
+	"Measure Name", [Name],
 	"Description", [Description],
 	"Data Type Id", [DataType],
 	"Data Type", SWITCH(
-					[DataType], 
-					6, "Whole Number",
-					8, "Decimal Number"
+					[DataType],
+					8, "Decimal",
+					6, "Integer",
+					20, "Percentage",
+					BLANK()
 				),
-	"Is Hidden", [IsHidden],
-	"Modified Time", [ModifiedTime]
+	"DAX Expression", [Expression],
+	"Is Hidden?", [IsHidden],
+	"Modified Time", [ModifiedTime],
+	"Display Folder", [DisplayFolder]
 )
