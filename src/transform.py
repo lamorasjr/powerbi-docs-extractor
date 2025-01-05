@@ -1,4 +1,3 @@
-import os
 import pandas as pd
 from powerbi_api_functions import get_datasets_in_workspace, get_datasets_dax_info
 
@@ -66,7 +65,36 @@ def etl_pbi_columns(dataset_id:str):
 
     data = get_datasets_dax_info(dataset_id=dataset_id, dax_query=dax_query)
     df = pd.json_normalize(data)
-    return df
+    df_etl = df.copy()
+    df_etl['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
+    df_etl['DATASET_ID'] = dataset_id
+    df_etl = df_etl.rename(columns={'[Column Id]':'COLUMN_ID',
+                                    '[Table Id]':'TABLE_ID',
+                                    '[Column Name]':'COLUMN_NAME',
+                                    '[Column Type Id]':'COLUMN_TYPE_ID',
+                                    '[Column Type]':'COLUMN_TYPE',
+                                    '[DAX Expression]':'DAX_EXPRESSION',
+                                    '[Data Type Id]':'DATA_TYPE_ID',
+                                    '[Data Type]':'DATA_TYPE',
+                                    '[Data Category]':'DATA_CATEGORY',
+                                    '[Description]':'DESCRIPTION',
+                                    '[Is Hidden?]':'IS_HIDDEN',
+                                    '[Modified Time]':'MODIFIED_AT',
+                                    '[Display Folder]':'DISPLAY_FOLDER'})
+    df_etl['MODIFIED_AT'] = pd.to_datetime(df_etl['MODIFIED_AT']).dt.date
+    df_etl = df_etl[['DATASET_ID',
+                     'TABLE_ID',
+                     'COLUMN_ID',
+                     'COLUMN_NAME',
+                     'COLUMN_TYPE',
+                     'DATA_TYPE',
+                     'DESCRIPTION',
+                     'DAX_EXPRESSION',
+                     'DATA_CATEGORY',
+                     'IS_HIDDEN',
+                     'MODIFIED_AT',
+                     'SYS_TIMESTAMP']]
+    return df_etl
 
 
 # ETL function for pbi dataset measures
@@ -97,15 +125,16 @@ def etl_pbi_relationships(dataset_id:str):
 if __name__ == '__main__':
     df_datasets = etl_pbi_datasets()
     # print(df_datasets.head())
-
+    
     test_dataset = df_datasets['DATASET_ID'].iloc[0]
     
     df_tables = etl_pbi_tables(dataset_id=test_dataset)
     # print(df_tables.head())
     df_tables.to_csv('data_raw/pbi_tables_raw.csv', index=False, sep=';', encoding='utf-8')
 
-    # df_columns = etl_pbi_columns(dataset_id=test_dataset)
-    # # print(df_columns.head(2))
+    df_columns = etl_pbi_columns(dataset_id=test_dataset)
+    # print(df_columns.info())
+    df_columns.to_csv('data_raw/pbi_columns_raw.csv', index=False, sep=';', encoding='utf-8')
     
     # df_measures = etl_pbi_measures(dataset_id=test_dataset)
     # # print(df_measures.head(2))
