@@ -1,37 +1,29 @@
 import pandas as pd
 from powerbi_api_functions import get_datasets_in_workspace, get_datasets_dax_info
 
-
-def etl_pbi_datasets():
-    """
-    Extract, transform and load all Power BI datasets from a given workspace to a Pandas dataframe.
-    """
+def etl_pbi_datasets() -> pd.DataFrame:
     data = get_datasets_in_workspace()
-    df = pd.json_normalize(data)
-    df_etl = df.copy()
-    df_etl['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
-    df_etl = df[['id', 'name', 'webUrl', 'createdDate']]
-    df_etl = df_etl.rename(columns={'id':'DATASET_ID',
-                                    'name':'DATASET_NAME',
-                                    'webUrl':'WEB_URL',
-                                    'createdDate':'CREATED_AT'})
-    df_etl['CREATED_AT'] = pd.to_datetime(df_etl['CREATED_AT']).dt.date
-    return df_etl
+    df_raw = pd.json_normalize(data)
+    df = df_raw.copy()
+    df['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
+    df = df[['id', 'name', 'createdDate']]
+    df = df.rename(columns={'id':'DATASET_ID',
+                            'name':'DATASET_NAME',
+                            'createdDate':'CREATED_AT'})
+    df['CREATED_AT'] = pd.to_datetime(df['CREATED_AT']).dt.date
+    return df
 
 
-def etl_dataset_tables(dataset_id:str):
-    """
-    Extract, transform and load all tables from a Power BI dataset to a Pandas dataframe.
-    """
+def etl_dataset_tables(dataset_id:str) -> pd.DataFrame:
     with open(f'dax_queries/tables_info.txt', 'r') as f:
         dax_query = f.read()
 
     data = get_datasets_dax_info(dataset_id=dataset_id, dax_query=dax_query)
-    df = pd.json_normalize(data)
-    df_etl = df.copy()
-    df_etl['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
-    df_etl['DATASET_ID'] = dataset_id
-    df_etl = df_etl.rename(columns={'[Table Id]':'TABLE_ID',
+    df_raw = pd.json_normalize(data)
+    df = df_raw.copy()
+    df['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
+    df['DATASET_ID'] = dataset_id
+    df = df.rename(columns={'[Table Id]':'TABLE_ID',
                                     '[Table Name]':'TABLE_NAME',
                                     '[Data Category]':'DATA_CATEGORY',
                                     '[Description]':'DESCRIPTION',
@@ -40,8 +32,8 @@ def etl_dataset_tables(dataset_id:str):
                                     '[Table Type]':'TABLE_TYPE',
                                     '[Calculation Group Flag]':'CALCULATION_GROUP_FLAG',
                                     '[Query Definition]':'QUERY_DEFINITION'})
-    df_etl['MODIFIED_AT'] = pd.to_datetime(df_etl['MODIFIED_AT']).dt.date
-    df_etl = df_etl[['DATASET_ID', 
+    df['MODIFIED_AT'] = pd.to_datetime(df['MODIFIED_AT']).dt.date
+    df = df[['DATASET_ID', 
                      'TABLE_ID',
                      'TABLE_NAME',
                      'DESCRIPTION',
@@ -52,22 +44,19 @@ def etl_dataset_tables(dataset_id:str):
                      'IS_HIDDEN',
                      'MODIFIED_AT',
                      'SYS_TIMESTAMP']]
-    return df_etl
+    return df
 
 
-def etl_dataset_columns(dataset_id:str):
-    """
-    Extract, transform and load all columns from a Power BI dataset to a Pandas dataframe.
-    """
+def etl_dataset_columns(dataset_id:str) -> pd.DataFrame:
     with open(f'dax_queries/columns_info.txt', 'r') as f:
         dax_query = f.read()
 
     data = get_datasets_dax_info(dataset_id=dataset_id, dax_query=dax_query)
-    df = pd.json_normalize(data)
-    df_etl = df.copy()
-    df_etl['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
-    df_etl['DATASET_ID'] = dataset_id
-    df_etl = df_etl.rename(columns={'[Column Id]':'COLUMN_ID',
+    df_raw = pd.json_normalize(data)
+    df = df_raw.copy()
+    df['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
+    df['DATASET_ID'] = dataset_id
+    df = df.rename(columns={'[Column Id]':'COLUMN_ID',
                                     '[Table Id]':'TABLE_ID',
                                     '[Column Name]':'COLUMN_NAME',
                                     '[Column Type Id]':'COLUMN_TYPE_ID',
@@ -80,8 +69,8 @@ def etl_dataset_columns(dataset_id:str):
                                     '[Is Hidden?]':'IS_HIDDEN',
                                     '[Modified Time]':'MODIFIED_AT',
                                     '[Display Folder]':'DISPLAY_FOLDER'})
-    df_etl['MODIFIED_AT'] = pd.to_datetime(df_etl['MODIFIED_AT']).dt.date
-    df_etl = df_etl[['DATASET_ID',
+    df['MODIFIED_AT'] = pd.to_datetime(df['MODIFIED_AT']).dt.date
+    df = df[['DATASET_ID',
                      'TABLE_ID',
                      'COLUMN_ID',
                      'COLUMN_NAME',
@@ -93,23 +82,19 @@ def etl_dataset_columns(dataset_id:str):
                      'IS_HIDDEN',
                      'MODIFIED_AT',
                      'SYS_TIMESTAMP']]
-    return df_etl
+    return df
 
 
-
-def etl_dataset_measures(dataset_id:str):
-    """
-    Extract, transform and load all measures from a Power BI dataset to a Pandas dataframe.
-    """
+def etl_dataset_measures(dataset_id:str) -> pd.DataFrame:
     with open(f'dax_queries/measures_info.txt', 'r') as f:
         dax_query = f.read()
 
     data = get_datasets_dax_info(dataset_id=dataset_id, dax_query=dax_query)
-    df = pd.json_normalize(data)
-    df_etl = df.copy()
-    df_etl['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
-    df_etl['DATASET_ID'] = dataset_id
-    df_etl = df_etl.rename(columns={'[Measure Id]':'MEASURE_ID',
+    df_raw = pd.json_normalize(data)
+    df = df_raw.copy()
+    df['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
+    df['DATASET_ID'] = dataset_id
+    df = df.rename(columns={'[Measure Id]':'MEASURE_ID',
                                     '[Table Id]':'TABLE_ID',
                                     '[Measure Name]':'MEASURE_NAME',
                                     '[Description]':'DESCRIPTION',
@@ -119,8 +104,8 @@ def etl_dataset_measures(dataset_id:str):
                                     '[Is Hidden?]':'IS_HIDDEN',
                                     '[Modified Time]':'MODIFIED_AT', 
                                     '[Display Folder]':'DISPLAY_FOLDER'})
-    df_etl['MODIFIED_AT'] = pd.to_datetime(df_etl['MODIFIED_AT']).dt.date
-    df_etl = df_etl[['DATASET_ID',
+    df['MODIFIED_AT'] = pd.to_datetime(df['MODIFIED_AT']).dt.date
+    df = df[['DATASET_ID',
                      'TABLE_ID',
                      'MEASURE_ID',
                      'MEASURE_NAME',
@@ -131,22 +116,22 @@ def etl_dataset_measures(dataset_id:str):
                      'IS_HIDDEN',
                      'MODIFIED_AT',
                      'SYS_TIMESTAMP']]
-    return df_etl
+    return df
 
 
-def etl_dataset_relationships(dataset_id:str):
+def etl_dataset_relationships(dataset_id:str) -> pd.DataFrame:
     """
-    Extract, transform and load all relationships from a Power BI dataset to a Pandas dataframe.
+    Extract, etl and load all relationships from a Power BI dataset to a Pandas dataframe.
     """
     with open(f'dax_queries/relationships_info.txt', 'r') as f:
         dax_query = f.read()
 
     data = get_datasets_dax_info(dataset_id=dataset_id, dax_query=dax_query)
-    df = pd.json_normalize(data)
-    df_etl = df.copy()
-    df_etl['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
-    df_etl['DATASET_ID'] = dataset_id
-    df_etl = df_etl.rename(columns={'[Relationship Id]':'RELATIONSHIP_ID',
+    df_raw = pd.json_normalize(data)
+    df = df_raw.copy()
+    df['SYS_TIMESTAMP'] = pd.to_datetime(pd.Timestamp('now'))
+    df['DATASET_ID'] = dataset_id
+    df = df.rename(columns={'[Relationship Id]':'RELATIONSHIP_ID',
                                     '[Relationship]':'RELATIONSHIP',
                                     '[From Table Id]':'FROM_TABLE_ID',
                                     '[From Column Id]':'FROM_COLUMN_ID',
@@ -162,8 +147,8 @@ def etl_dataset_relationships(dataset_id:str):
                                     '[Security Filtering Behavior Id]':'SECURITY_FILTERING_BEHAVIOR_ID',
                                     '[Security Filtering Behavior]':'SECURITY_FILTERING_BEHAVIOR',
                                     '[Modified Time]':'MODIFIED_AT'})
-    df_etl['MODIFIED_AT'] = pd.to_datetime(df_etl['MODIFIED_AT']).dt.date
-    df_etl = df_etl[['DATASET_ID',
+    df['MODIFIED_AT'] = pd.to_datetime(df['MODIFIED_AT']).dt.date
+    df = df[['DATASET_ID',
                      'RELATIONSHIP_ID',
                      'RELATIONSHIP',
                      'IS_ACTIVE',
@@ -178,4 +163,4 @@ def etl_dataset_relationships(dataset_id:str):
                      'MODIFIED_AT',
                      'SYS_TIMESTAMP', 
                      ]]
-    return df_etl
+    return df
