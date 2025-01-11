@@ -1,6 +1,6 @@
 import pandas as pd
 import warnings
-from etl import etl_pbi_tables
+from src.pipeline import etl_pbi_tables
 
 output_path = 'data/'
 
