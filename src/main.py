@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from src.extract_powerbi_api import get_all_reports, get_all_datasets, get_all_datasets_info
+from extract_powerbi_api import get_all_reports, get_all_datasets, get_all_datasets_info
 
 def extract_powerbi_data_catalog_info():
     workspace_ids = os.getenv('PBI_WORKSPACES_IDS').split(",")
