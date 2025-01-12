@@ -4,6 +4,11 @@
 *.parquet
 .DS_Store
 
+# Power BI pbip cache
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+*.pbix
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
