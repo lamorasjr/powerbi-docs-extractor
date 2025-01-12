@@ -1,6 +1,7 @@
 # Temp files
 *.csv
 *.xlsx
+*.parquet
 .DS_Store
 
 # Byte-compiled / optimized / DLL files
