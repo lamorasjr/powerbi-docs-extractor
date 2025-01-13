@@ -1,0 +1,22 @@
+EVALUATE
+SELECTCOLUMNS(
+	INFO.RELATIONSHIPS(),
+	"RELATIONSHIP_ID", [ID],
+	"RELATIONSHIP", SWITCH([FromCardinality], 1, "One", 2, "Many") &
+					SWITCH([CrossFilteringBehavior], 1, " <--- ", 2, " <---> ") &
+					SWITCH([ToCardinality], 1, "One", 2, "Many"),
+	"FROM_TABLE_ID", [FromTableID],
+	"FROM_COLUMN_ID", [FromColumnID],
+	"FROM_CARDINALITY_ID", [FromCardinality],
+	"FROM_CARDINALITY", SWITCH([FromCardinality], 1, "One", 2, "Many"),
+	"TO_TABLE_ID", [ToTableID],
+	"TO_COLUMN_ID", [ToColumnID],
+	"TO_CARDINALITY_ID", [ToCardinality],
+	"TO_CARDINALITY", SWITCH([ToCardinality], 1, "One", 2, "Many"),
+	"CROSS_FILTERING_BEHAVIOR_ID", [CrossFilteringBehavior],
+	"CROSS_FILTERING_BEHAVIOR", SWITCH([CrossFilteringBehavior], 1, "Single", 2, "Both", BLANK()),
+	"IS_ACTIVE", [IsActive],
+	"SECURITY_FILTERING_BEHAVIOR_ID", [SecurityFilteringBehavior],
+	"SECURITY_FILTERING_BEHAVIOR", SWITCH([SecurityFilteringBehavior], 1, "Single", 2, "Both", BLANK()),
+	"MODIFIED_DATE", [ModifiedTime]
+)
