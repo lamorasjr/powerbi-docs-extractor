@@ -18,8 +18,8 @@ SELECTCOLUMNS(
 VAR stg_tables_query_definition =
 SELECTCOLUMNS(
 	INFO.PARTITIONS(),
-	"Table Id", [TableID],
-	"Query Definition", [QueryDefinition]
+	"TABLE_ID", [TableID],
+	"QUERY_DEFINITION", [QueryDefinition]
 )
 
 EVALUATE
