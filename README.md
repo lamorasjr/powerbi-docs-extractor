@@ -1,4 +1,4 @@
-# Power BI Data Catalog 
+# Power BI Data Catalog Extractor
 
 ## Introduction
 This project contains a Python script for extracting metadata from Power BI reports and datasets within specified Power BI Service workspaces using the REST API. The data can be exported to "CSV" or "Parquet" in a given output directory and loaded into the Power BI report to enable data catalog management and analysis of your Power BI assets contained in your Power BI environment.
