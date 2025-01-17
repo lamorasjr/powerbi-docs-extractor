@@ -1,0 +1,28 @@
+EVALUATE
+	SELECTCOLUMNS(
+		FILTER(
+			INFO.MEASURES(),
+			[IsSimpleMeasure] = FALSE()
+		),
+		"MEASURE_ID", [ID],
+		"TABLE_ID", [TableID],
+		"MEASURE_NAME", [Name],
+		"DESCRIPTION", [Description],
+		"DATA_TYPE_ID", [DataType],
+		"DATA_TYPE", SWITCH(
+			[DataType],
+			2, "String",
+			6, "Integer",
+			8, "Decimal",
+			9, "DateTime",
+			10, "Currency",
+			11, "Boolean",
+			20, "Percentage",
+			BLANK()
+		),
+		"FORMAT_STRING", [FormatString],
+		"DAX_EXPRESSION", [Expression],
+		"DISPLAY_FOLDER", [DisplayFolder],
+		"IS_HIDDEN", [IsHidden],
+		"MODIFIED_AT", [ModifiedTime]
+	)
