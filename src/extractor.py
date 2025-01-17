@@ -1,9 +1,14 @@
 import os
 import re
 import pandas as pd
-from powerbi_rest_api import ( get_auth_token, get_workspaces_info, get_workspace_reports, 
-                               get_workspace_datasets, execute_dataset_query, get_report_pages )
-from loader import load_data
+from src.loader import load_data
+from src.powerbi_rest_api import (
+    get_workspaces_info, 
+    get_workspace_reports,
+    get_workspace_datasets, 
+    execute_dataset_query, 
+    get_report_pages 
+)
 
 # Extract, transform and load powerbi workspaces
 def etl_powerbi_workspaces(access_token:str, workspaces_ids:list, output_path:str, output_format:str):
@@ -21,7 +26,7 @@ def etl_powerbi_workspaces(access_token:str, workspaces_ids:list, output_path:st
         'name': 'WORKSPACE_NAME',
         'type': 'TYPE'
     })
-    return load_data(df, 'powerbi_workspaces', output_path, output_format)
+    load_data(df, 'powerbi_workspaces', output_path, output_format)
 
 
 # Extract, transform and load powerbi reports
@@ -41,8 +46,7 @@ def etl_powerbi_reports(access_token:str, workspaces_ids:list, output_path:str, 
         'reportType':'REPORT_TYPE', 
         'webUrl':'WEB_URL'
     })
-
-    return load_data(df, 'powerbi_reports', output_path, output_format)
+    load_data(df, 'powerbi_reports', output_path, output_format)
 
 
 # Extract, transform and load powerbi reports pages
@@ -63,8 +67,7 @@ def etl_powerbi_reports_pages(access_token:str, workspaces_ids:list, output_path
         'displayName':'PAGE_NAME', 
         'order':'ORDER'
     })
-
-    return load_data(df, 'powerbi_reports_pages', output_path, output_format)
+    load_data(df, 'powerbi_reports_pages', output_path, output_format)
 
 
 # Extract, transform and load powerbi datasets
@@ -85,12 +88,12 @@ def etl_powerbi_datasets(access_token:str, workspaces_ids:list, output_path:str,
         'webUrl':'WEB_URL'
     })
     df['CREATED_DATE'] = pd.to_datetime(df['CREATED_DATE']).dt.date
+    load_data(df, 'powerbi_datasets', output_path, output_format)
 
-    return load_data(df, 'powerbi_datasets', output_path, output_format)
 
 # Extract, transform and load powerbi dataset dax info queries
 def etl_datasets_dax_queries(access_token:str, workspaces_ids:list, output_path:str, output_format:str):
-    dax_queries_dir = 'src\\dax_queries'
+    dax_queries_dir = os.path.join(os.getcwd(), 'dax_queries')
 
     for q in os.listdir(dax_queries_dir):
         file_name = q.split(".")[0]
@@ -113,23 +116,4 @@ def etl_datasets_dax_queries(access_token:str, workspaces_ids:list, output_path:
         old_columns_name = df.columns
         new_columns_name = {i: re.sub(r'\[([^\]]+)\]', r'\1', i) for i in old_columns_name}
         df = df.rename(columns=new_columns_name)
-        df['MODIFIED_DATE'] = pd.to_datetime(df['MODIFIED_DATE']).dt.date
-        
         load_data(df, f'powerbi_datasets_{file_name}', output_path, output_format)
-
-
-if __name__ == '__main__':
-    TENANT_ID = os.getenv('PBI_TENANT_ID')
-    CLIENT_ID = os.getenv('PBI_CLIENT_ID')
-    CLIENT_SECRET = os.getenv('PBI_CLIENT_SECRET')
-    WORKSPACES_IDS = os.getenv('PBI_WORKSPACES_IDS').split(",")
-    output_path = 'data/'
-    output_format = 'csv'
-
-    access_token = get_auth_token(TENANT_ID, CLIENT_ID, CLIENT_SECRET)
-
-    etl_powerbi_workspaces(access_token, WORKSPACES_IDS, output_path, output_format)
-    etl_powerbi_reports(access_token, WORKSPACES_IDS, output_path, output_format)
-    etl_powerbi_reports_pages(access_token, WORKSPACES_IDS, output_path, output_format)
-    etl_powerbi_datasets(access_token, WORKSPACES_IDS, output_path, output_format)
-    etl_datasets_dax_queries(access_token, WORKSPACES_IDS, output_path, output_format)
