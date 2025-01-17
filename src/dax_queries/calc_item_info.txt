@@ -1,0 +1,10 @@
+EVALUATE
+SELECTCOLUMNS(
+	INFO.CALCULATIONITEMS(),
+	"CALC_GROUP_ID", [CalculationGroupID],
+	"CALC_ITEM_ID", [ID],
+	"CALC_ITEM_NAME", [Name],
+	"EXPRESSION", [Expression],
+	"CALC_ITEM_DESCRIPTION", [Description],
+	"MODIFIED_AT", [ModifiedTime]
+)

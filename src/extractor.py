@@ -113,7 +113,7 @@ def etl_datasets_dax_queries(access_token:str, workspaces_ids:list, output_path:
         old_columns_name = df.columns
         new_columns_name = {i: re.sub(r'\[([^\]]+)\]', r'\1', i) for i in old_columns_name}
         df = df.rename(columns=new_columns_name)
-        df['MODIFIED_DATE'] = pd.to_datetime(df['MODIFIED_DATE']).dt.date
+        # df['MODIFIED_AT'] = pd.to_datetime(df['MODIFIED_AT']).dt.date
         
         load_data(df, f'powerbi_datasets_{file_name}', output_path, output_format)
 

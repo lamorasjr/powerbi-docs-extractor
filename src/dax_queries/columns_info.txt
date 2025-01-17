@@ -22,14 +22,15 @@ SELECTCOLUMNS(
 						2, "Text",
 						6, "Integer",
 						8, "Decimal",
-						9, "Date/Time",
+						9, "DateTime",
 						10, "Currency",
 						11, "Boolean",
+						20, "Percentage",
 						BLANK()
 					),
 	"DATA_CATEGORY", [DataCategory],
 	"DESCRIPTION", [Description],
 	"IS_HIDDEN", [IsHidden],
-	"MODIFIED_DATE", [ModifiedTime],
+	"MODIFIED_AT", [ModifiedTime],
 	"DISPLAY_FOLDER", [DisplayFolder]
 )
