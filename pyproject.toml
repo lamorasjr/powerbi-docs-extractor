@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "powerbi-data-catalog"
+name = "powerbi-data-catalog-extractor"
 version = "0.1.0"
 description = ""
 authors = ["lamorasjr <lamorasjr@gmail.com>"]
