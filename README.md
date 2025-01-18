@@ -1,48 +1,85 @@
 # Power BI Data Catalog Extractor
 
 ## Introduction
-This project contains a Python script for extracting metadata from Power BI reports and datasets within specified Power BI Service workspaces using the REST API. The data can be exported to "CSV" or "Parquet" in a given output directory and loaded into the Power BI report to enable data catalog management and analysis of your Power BI assets contained in your Power BI environment.
+This project provides a Python script designed to extract metadata from Power BI reports and datasets across specified Power BI Service workspaces using the Power BI REST API. The extracted data can be exported in either CSV or Parquet format to a designated output directory.
 
-Key Features:
-* Extracts metadata from Power BI Service workspaces using the REST API.
-* Supports exporting data to CSV or Parquet formats.
-* Integration with Power BI desktop for Data Catalog analysis and reporting.
+Once exported, the data can be loaded into Power BI for further analysis, supporting data catalog management and enabling insights into the Power BI assets within your environment.
+
+It supports running in different environments using Docker, Poetry with Pyenv, or pip for dependency management.
+
+### Key Features:
+* **Extract metadata:** Retrieve metadata from multiple Power BI Service workspaces using the Power BI REST API.
+* **Export options:** Export the metadata to CSV or Parquet formats.
+* **Power BI integration:** Load the exported data into Power BI Desktop for data catalog analysis and reporting.
 
 ## Requirements
-* Pyenv
-* Poetry
-* Power BI access token
 
-## Installation
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/lamorasjr/extract-powerbi-datasets-info.git
+- **Python 3.12 or greater**
+- **[Azure AD application](https://learn.microsoft.com/en-us/power-bi/developer/embedded/register-app?tabs=customers)** for Power BI with at least one of the following scopes:
+  - `Workspace.Read.All`
+  - `Workspace.ReadWrite.All`
+- **Power BI Desktop** (Required only for report templates)
+- **Docker** (Optional but recommended for containerized deployment)
 
-    cd extract-powerbi-datasets-info
-    ```
+## Setup
+### 1. Clone the repository:
+Clone the repository to your local machine:
+```bash
+git clone https://github.com/lamorasjr/extract-powerbi-datasets-info.git
 
-2. Install the required Python version with Pyenv:
-    ```bash
-    pyenv install 3.12.6
-    ```
+cd extract-powerbi-datasets-info
+```
 
-3. Activate the Python version into the local repository:
-    ```bash
-    pyenv local 3.12.6
-    ```
+### 2. Create the .env File:
+* A `.env` file is required to run the project.
+* Create a .env file in the root directory of the project.
+* Copy the content from .env-example and update it with your Azure AD application credentials, target workspaces ids and output directory path.
 
-4. Create the virtual enviroment and install the dependencies with Poetry:
-    ```bash
-    poetry install
-    ```
+### 3. Install Dependencies and Run the Application
 
-5. Activate the virtual environment:
-    ```bash
-    poetry shell
-    ```
+You can run the application using one of the following methods:
 
-5. Run the script using Python:
+### Option 1: Run with Docker (Recommended)
 
-    ```bash
-    poetry run python <place_holder>
-    ```
+
+### Option 2: Run with Pyenv and Poetry
+
+#### 1. Install Python with Pyenv:
+Install the required Python version (3.12.6) with Pyenv:
+```bash
+pyenv install 3.12.6
+```
+
+#### 2. Activate the Python version for the project:
+```bash
+pyenv local 3.12.6
+```
+
+#### 3. Install dependencies with Poetry:
+if you don't have it yet. First, install Poetry, then install the dependencies.
+```bash
+poetry install --no-root
+```
+
+#### 4. Activate the Poetry virtual environment:
+```bash
+poetry shell
+```
+
+5. Run the application:
+```bash
+poetry run python main.py
+```
+
+### Option 3: Run with pip (without Poetry)
+If you prefer not to use Poetry, you can install the dependencies using pip:
+
+#### 1. Install dependencies with pip:
+```bash
+pip install -r requirements.txt
+```
+
+#### 2. Run the application:
+```bash
+python main.py
+```
