@@ -9,7 +9,7 @@ from src.extractor import (
     etl_datasets_dax_queries
 )
 
-def main(output_path='data/', output_format='csv'):
+def main(output_path='sample_data/', output_format='csv'):
 
     logging.info("Starting Power BI ETL process...")
     try:
