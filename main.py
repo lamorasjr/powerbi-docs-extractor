@@ -1,6 +1,6 @@
 import os
 import logging
-from src.powerbi_rest_api import get_auth_token
+from src.powerbi_rest_api import get_access_token
 from src.extractor import (
     etl_powerbi_workspaces,
     etl_powerbi_reports,
@@ -24,7 +24,7 @@ def main(output_path='sample_data/', output_format='csv'):
             raise ValueError("One or more required variables are missing, review .env file.")
 
         # Generate access token
-        access_token = get_auth_token(tenant_id, client_id, client_secret)
+        access_token = get_access_token(tenant_id, client_id, client_secret)
         logging.info("Successfully authenticated with Power BI API.")
 
         # Run ETL of Power BI data

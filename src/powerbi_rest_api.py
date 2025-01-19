@@ -1,7 +1,7 @@
 import json
 import requests
 
-def get_auth_token(tenant_id:str, client_id:str, client_secret:str)->json:
+def get_access_token(tenant_id:str, client_id:str, client_secret:str)->json:
     url = f'https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token'
     payload = {
         'grant_type': 'client_credentials',
