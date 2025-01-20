@@ -1,7 +1,6 @@
 import os
 import re
 import pandas as pd
-from loader import load_data
 from powerbi_rest_api import (
     get_workspaces_info, 
     get_workspace_reports,
@@ -9,6 +8,21 @@ from powerbi_rest_api import (
     execute_dataset_query, 
     get_report_pages 
 )
+
+
+def export_to_csv_or_parquet(df: pd.DataFrame, file_name:str, output_path: str, output_format: str):
+    """
+    Custom function to export the api data to csv or parquet
+    """
+    if output_format == 'csv':
+        df.to_csv(f'{output_path}/{file_name}.csv', index=False, sep=';', encoding='utf-8')
+        print(f'The data for {file_name} has been sucessfully exported.')
+    elif output_format == 'parquet':
+        df.to_parquet(f'{output_path}/{file_name}.parquet', index=False)
+        print(f'The data for {file_name} has been sucessfully exported.')
+    else:
+        print('Wrong output format, select between "csv" or "parquet"')
+
 
 # Extract, transform and load powerbi workspaces
 def etl_powerbi_workspaces(access_token:str, workspaces_ids:list, output_path:str, output_format:str):
@@ -26,7 +40,7 @@ def etl_powerbi_workspaces(access_token:str, workspaces_ids:list, output_path:st
         'name': 'WORKSPACE_NAME',
         'type': 'TYPE'
     })
-    load_data(df, 'powerbi_workspaces', output_path, output_format)
+    export_to_csv_or_parquet(df, 'workspaces', output_path, output_format)
 
 
 # Extract, transform and load powerbi reports
@@ -46,7 +60,7 @@ def etl_powerbi_reports(access_token:str, workspaces_ids:list, output_path:str, 
         'reportType':'REPORT_TYPE', 
         'webUrl':'WEB_URL'
     })
-    load_data(df, 'powerbi_reports', output_path, output_format)
+    export_to_csv_or_parquet(df, 'reports', output_path, output_format)
 
 
 # Extract, transform and load powerbi reports pages
@@ -67,7 +81,7 @@ def etl_powerbi_reports_pages(access_token:str, workspaces_ids:list, output_path
         'displayName':'PAGE_NAME', 
         'order':'ORDER'
     })
-    load_data(df, 'powerbi_reports_pages', output_path, output_format)
+    export_to_csv_or_parquet(df, 'reports_pages', output_path, output_format)
 
 
 # Extract, transform and load powerbi datasets
@@ -88,7 +102,7 @@ def etl_powerbi_datasets(access_token:str, workspaces_ids:list, output_path:str,
         'webUrl':'WEB_URL'
     })
     df['CREATED_DATE'] = pd.to_datetime(df['CREATED_DATE']).dt.date
-    load_data(df, 'powerbi_datasets', output_path, output_format)
+    export_to_csv_or_parquet(df, 'datasets', output_path, output_format)
 
 
 # Extract, transform and load powerbi dataset dax info queries
@@ -116,4 +130,4 @@ def etl_datasets_dax_queries(access_token:str, workspaces_ids:list, output_path:
         old_columns_name = df.columns
         new_columns_name = {i: re.sub(r'\[([^\]]+)\]', r'\1', i) for i in old_columns_name}
         df = df.rename(columns=new_columns_name)
-        load_data(df, f'powerbi_datasets_{file_name}', output_path, output_format)
+        export_to_csv_or_parquet(df, f'datasets_{file_name}', output_path, output_format)
