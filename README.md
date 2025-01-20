@@ -58,7 +58,7 @@ pyenv local 3.12.6
 #### 3. Install dependencies with Poetry:
 if you don't have it yet. First, install Poetry, then install the dependencies.
 ```bash
-poetry install --no-root
+poetry install
 ```
 
 #### 4. Activate the Poetry virtual environment:
