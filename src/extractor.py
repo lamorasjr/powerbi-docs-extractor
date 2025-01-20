@@ -1,8 +1,8 @@
 import os
 import re
 import pandas as pd
-from src.loader import load_data
-from src.powerbi_rest_api import (
+from loader import load_data
+from powerbi_rest_api import (
     get_workspaces_info, 
     get_workspace_reports,
     get_workspace_datasets, 
