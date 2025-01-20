@@ -16,10 +16,10 @@ def export_to_csv_or_parquet(df: pd.DataFrame, file_name:str, output_path: str, 
     """
     if output_format == 'csv':
         df.to_csv(f'{output_path}/{file_name}.csv', index=False, sep=';', encoding='utf-8')
-        print(f'The data for {file_name} has been sucessfully exported.')
+        print(f'File exported sucessfully: {file_name}.csv')
     elif output_format == 'parquet':
         df.to_parquet(f'{output_path}/{file_name}.parquet', index=False)
-        print(f'The data for {file_name} has been sucessfully exported.')
+        print(f'File exported sucessfully: {file_name}.parquet')
     else:
         print('Wrong output format, select between "csv" or "parquet"')
 

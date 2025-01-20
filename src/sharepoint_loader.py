@@ -27,7 +27,7 @@ def get_sharepoint_drive_id(access_token:str, site_id:str)->str:
         raise Exception(f'Error to get Sharepoint drive id: {response.status_code} - {response.text}')
     
 
-def upload_to_sharepoint(access_token:str, drive_id:str, sharepoint_folder:str, file_path:str):
+def upload_file(access_token:str, drive_id:str, sharepoint_folder:str, file_path:str):
     
     file_name = os.path.basename(file_path)
 
@@ -42,6 +42,16 @@ def upload_to_sharepoint(access_token:str, drive_id:str, sharepoint_folder:str, 
         response = requests.put(url, headers=headers, data=file_content)
 
     if response.status_code in [200, 201]:
-        print(f'File uploaded to Sharepoint successfully: {file_name}')
+        print(f'[{response.status_code}] File uploaded to Sharepoint successfully: {file_name}')
     else:
         raise Exception(f'File upload to Sharepoint failed: {response.status_code} - {response.text}')
+    
+
+def upload_to_sharepoint(access_token:str, sharepoint_url:str, sharepoint_folder:str, file_path:str):
+    try:
+        site_name = os.path.basename(sharepoint_url)
+        site_id = get_sharepoint_site_id(access_token, site_name)
+        drive_id = get_sharepoint_drive_id(access_token, site_id)
+        return upload_file(access_token, drive_id, sharepoint_folder, file_path)
+    except Exception as e:
+        print(f'Sharepoint upload error: {e}')
