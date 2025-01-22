@@ -15,9 +15,14 @@ It supports running in different environments using Docker, Poetry with Pyenv, o
 ## Requirements
 
 - **Python 3.12 or greater**
-- **[Azure AD application](https://learn.microsoft.com/en-us/power-bi/developer/embedded/register-app?tabs=customers)** for Power BI with at least one of the following scopes:
-  - `Workspace.Read.All`
-  - `Workspace.ReadWrite.All`
+- **[Azure AD application](https://learn.microsoft.com/en-us/power-bi/developer/embedded/register-app?tabs=customers)** with at least one of the following scopes:
+  - Power BI Service:
+    - `Workspace.Read.All`
+    - `Workspace.ReadWrite.All`
+  - Microsoft Graph:
+    - `User.Read`
+    - `Files.ReadWrite.All`
+    - `Sites.ReadWrite.All`
 - **Power BI Desktop** (Required only for report templates)
 - **Docker** (Optional but recommended for containerized deployment)
 
@@ -33,7 +38,7 @@ cd extract-powerbi-datasets-info
 ### 2. Create the .env File:
 * A `.env` file is required to run the project.
 * Create a .env file in the root directory of the project.
-* Copy the content from .env-example and update it with your Azure AD application credentials, target workspaces ids and output directory path.
+* Copy the content from .env-example and update it with your Azure AD application credentials, target workspaces ids, sharepoint information and app configuration.
 
 ### 3. Install Dependencies and Run the Application
 
@@ -68,7 +73,7 @@ poetry shell
 
 5. Run the application:
 ```bash
-poetry run python main.py
+poetry run python src/main.py
 ```
 
 ### Option 3: Run with pip (without Poetry)
