@@ -42,9 +42,9 @@ def upload_file(access_token:str, drive_id:str, sharepoint_folder:str, file_path
         response = requests.put(url, headers=headers, data=file_content)
 
     if response.status_code in [200, 201]:
-        print(f'[{response.status_code}] File uploaded to Sharepoint successfully: {file_name}')
+        print(f'- Successfuly uploaded: {file_name} - status code: {response.status_code}.')
     else:
-        raise Exception(f'File upload to Sharepoint failed: {response.status_code} - {response.text}')
+        raise Exception(f'Sharepoint upload failed: {response.status_code} - {response.text}')
     
 
 def upload_to_sharepoint(access_token:str, sharepoint_url:str, sharepoint_folder:str, file_path:str):
