@@ -6,7 +6,9 @@ from extractor_powerbi_api import etl_powerbi_data
 
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format='{asctime} - {levelname} - {message}',
+    style='{',
+    datefmt='%Y-%m-%d %H:%M'
 )
 
 def main():
