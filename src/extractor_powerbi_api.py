@@ -86,6 +86,7 @@ def extract_reports(access_token:str, workspaces_ids:list)->pd.DataFrame:
 
 def extract_reports_pages(access_token:str, workspaces_ids:list)->pd.DataFrame:
     df_reports = extract_reports(access_token, workspaces_ids)
+    df_reports = df_reports[df_reports['REPORT_TYPE'] == 'PowerBIReport']
 
     workspaces_reports_ids = df_reports[['WORKSPACE_ID', 'REPORT_ID']].to_dict(orient='records')
 
@@ -140,6 +141,7 @@ def extract_datasets(access_token:str, workspaces_ids:list)->pd.DataFrame:
 
 
 def extract_datasets_info_queries(access_token:str, workspaces_ids:list, dax_query:str)->pd.DataFrame:
+    
     df_datasets = extract_datasets(access_token, workspaces_ids)
     
     workspaces_reports_ids = df_datasets[['WORKSPACE_ID', 'DATASET_ID']].to_dict(orient='records')
@@ -176,38 +178,3 @@ def export_csv_or_parquet(df: pd.DataFrame, file_name:str, output_format:str, ou
 
     else:
         raise ValueError('Wrong output format, select between "csv" or "parquet".')
-
-
-def etl_powerbi_data(access_token:str, workspaces_ids:list, output_format:str, output_path):
-    try:
-        workspaces = extract_workspaces(access_token, workspaces_ids)
-        export_csv_or_parquet(workspaces, 'workspaces', output_format, output_path)
-
-        reports = extract_reports(access_token, workspaces_ids)
-        export_csv_or_parquet(reports, 'reports', output_format, output_path)
-
-        reports_pages = extract_reports_pages(access_token, workspaces_ids)
-        export_csv_or_parquet(reports_pages, 'reports_pages', output_format, output_path)
-
-        datasets = extract_datasets(access_token, workspaces_ids)
-        export_csv_or_parquet(datasets, 'datasets', output_format, output_path)
-
-        dax_queries_dir = os.path.join(os.getcwd(), 'src', 'dax_queries')
-
-        for file in os.listdir(dax_queries_dir):
-            if file.endswith('.txt'):
-                file_name = file.split(".")[0] 
-                file_dir = os.path.join(dax_queries_dir, file)
-
-                with open(file_dir, 'r') as file:
-                    dax_query = file.read()
-                
-                df_query_temp = extract_datasets_info_queries(access_token, workspaces_ids, dax_query)
-                export_csv_or_parquet(df_query_temp, file_name, output_format, output_path)
-
-    except Exception as e:
-        print(f'Power BI ETL error: {e}')
-
-
-
-
