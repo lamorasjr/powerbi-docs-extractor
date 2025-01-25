@@ -6,7 +6,7 @@ Once exported, the data can be loaded into Power BI for further analysis, suppor
 
 It supports running in different environments using Docker, Poetry with Pyenv, or pip for dependency management.
 
-<img src=assets\pj_diagram.png alt="pj_diagram" width="500"/>
+<img src=assets\pj_diagram.png alt="pj_diagram" width="100%"/>
 
 ## Table of Contents
 - [Key Features](#key-features)
