@@ -6,9 +6,9 @@ By enabling data catalog management, this project helps organizations and data p
 
 The project supports execution in various environments, including Docker, Poetry with Pyenv, or pip for dependency management.
 
-<img src=assets\pj_diagram.png alt="pj_diagram" width="100%"/>
+<img src=assets\pj_diagram2.png alt="pj_diagram" width="100%"/>
 
-#### Key features include:
+### Key features include:
 
 - **Automated Metadata Extraction:** Collects metadata from multiple Power BI workspaces in the Power BI Service.
 
