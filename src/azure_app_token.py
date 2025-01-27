@@ -1,12 +1,12 @@
 import requests
 
-def get_access_token(tenant_id, client_id, client_secret, scope_app):
+def get_access_token(scope_app, tenant_id, client_id, client_secret):
     if scope_app == 'powerbi':
         scope = 'https://analysis.windows.net/powerbi/api/.default'
     elif scope_app == 'sharepoint':
         scope = 'https://graph.microsoft.com/.default'
     else:
-        raise ValueError('Invalid scope for this application. Use "powerbi" or "sharepoint".')
+        raise ValueError(f'"{scope_app}" is an invalid scope value. Use "powerbi" or "sharepoint".')
 
     url = f'https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token'
     payload = {

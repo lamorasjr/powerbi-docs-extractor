@@ -1,4 +1,3 @@
-import os
 import json
 import requests
 import pandas as pd
@@ -10,7 +9,9 @@ def get_powerbi_data(access_token:str, endpoint:str)->json:
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json'  
     }
+
     response = requests.get(url=url, headers=headers)
+
     if response.status_code == 200:
         data = response.json()
         return data
@@ -28,7 +29,9 @@ def execute_powerbi_dataset_query(access_token:str, workspace_id:str, dataset_id
         'queries': [{'query': f'{dax_query}'}],
         'serializerSettings': {'includeNulls': 'true'}
     }
+
     response = requests.post(url=url, headers=headers, json=body)
+    
     if response.status_code == 200:
         response_json = response.json()
         data = {
@@ -162,19 +165,3 @@ def extract_datasets_info_queries(access_token:str, workspaces_ids:list, dax_que
     new_columns_name = {i: re.sub(r'\[([^\]]+)\]', r'\1', i) for i in old_columns_name}
     df = df.rename(columns=new_columns_name)
     return df
-
-
-def export_csv_or_parquet(df: pd.DataFrame, file_name:str, output_format:str, output_path:str):
-    """
-    Custom function to export the api data to csv or parquet
-    """
-    if output_format == 'csv':
-        df.to_csv(f'{output_path}/{file_name}.csv', index=False, sep=';', encoding='utf-8')
-        print(f'- Successfully exported: {file_name}.{output_format}.')
-        
-    elif output_format == 'parquet':
-        df.to_parquet(f'{output_path}/{file_name}.parquet', index=False)
-        print(f'- Successfully exported: {file_name}.{output_format}.')
-
-    else:
-        raise ValueError('Wrong output format, select between "csv" or "parquet".')

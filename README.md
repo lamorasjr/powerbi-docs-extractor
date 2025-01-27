@@ -1,15 +1,25 @@
-# Power BI Data Catalog Extractor
+# ETL Power BI Data Catalog
 
-This project provides a Python script designed to extract metadata from Power BI reports and datasets across specified Power BI Service workspaces using the Power BI REST API. The extracted data can be exported in either CSV or Parquet format to a designated output directory.
+This project automates the extraction of metadata from Power BI workspaces, including reports and semantic models, and stores it as CSV files in SharePoint, making them readily available for further analysis and reporting.
 
-Once exported, the data can be loaded into Power BI for further analysis, supporting data catalog management and enabling insights into the Power BI assets within your environment.
+By enabling data catalog management, this project helps organizations and data professionals better understand and manage their assets in Power BI Service. It enhances data governance, facilitates data discovery and documentation processes, also contributing to improve the team’s overall data literacy.
 
-It supports running in different environments using Docker, Poetry with Pyenv, or pip for dependency management.
+The project supports execution in various environments, including Docker, Poetry with Pyenv, or pip for dependency management.
 
 <img src=assets\pj_diagram.png alt="pj_diagram" width="100%"/>
 
+#### Key features include:
+
+- **Automated Metadata Extraction:** Collects metadata from multiple Power BI workspaces in the Power BI Service.
+
+- **Data Storage:** Saves extracted metadata as CSV files in a SharePoint folder for centralized access.
+
+- **Power BI Integration:** Provides a Power BI-ready template to enable detailed reporting and analysis.
+
+- **Data Catalog Management:** Supports the creation and maintenance of a comprehensive data catalog for better governance.
+
+
 ## Table of Contents
-- [Key Features](#key-features)
 - [Requirements](#requirements)
 - [Setup](#setup)
   - [Clone the repository](#1-clone-the-repository)
@@ -18,12 +28,6 @@ It supports running in different environments using Docker, Poetry with Pyenv, o
     - [Option 1: Run with Docker (Recommended)](#option-1-run-with-docker-recommended)
     - [Option 2: Option 2: Run with Pyenv and Poetry](#option-2-run-with-pyenv-and-poetry)
     - [Option 3: Run with pip (without Poetry)](#option-3-run-with-pip-without-poetry)
-
-
-## Key Features:
-* **Extract metadata:** Retrieve metadata from multiple Power BI Service workspaces using the Power BI REST API.
-* **Export options:** Export the metadata to CSV or Parquet formats.
-* **Power BI integration:** Load the exported data into Power BI Desktop for data catalog analysis and reporting.
 
 ## Requirements
 
@@ -50,8 +54,8 @@ cd extract-powerbi-datasets-info
 
 ### 2. Create the .env File:
 * A `.env` file is required to run the project.
-* Create a .env file in the root directory of the project.
-* Copy the content from .env-example and update it with your Azure AD application credentials, target workspaces ids, sharepoint information and app configuration.
+* Create a `.env` file in the root directory of the project.
+* Copy the content from .env-example and update it with your Azure application credentials, source workspaces ids, and target sharepoint details.
 
 ### 3. Install Dependencies and Run the Application
 
