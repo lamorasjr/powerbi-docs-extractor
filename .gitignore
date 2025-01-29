@@ -8,6 +8,8 @@
 **/.pbi/localSettings.json
 **/.pbi/cache.abf
 *.pbix
+**/dax_studio
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
