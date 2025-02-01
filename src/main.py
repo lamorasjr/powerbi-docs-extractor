@@ -1,14 +1,13 @@
 import os
 import logging
 from dotenv import load_dotenv
-from azure_app_token import get_access_token
-from sharepoint_loader import get_sharepoint_token, load_to_sharepoint
-from extractor_powerbi_api import (
-    get_powerbi_token,
+from sharepoint_loader import load_to_sharepoint
+from extractor_powerbi import (
     extract_workspaces,
     extract_reports,
     extract_reports_pages,
-    extract_datasets
+    extract_datasets,
+    dscmd_extract_datasets_info
 )
 
 logging.basicConfig(
@@ -52,6 +51,17 @@ def main():
 
         df_datasets = extract_datasets(workspaces_ids)
         load_to_sharepoint(sharepoint_site, sharepoint_folder, df_datasets, 'datasets.csv')
+
+        dax_queries_dir = os.path.join(os.getcwd(), 'src', 'dax_queries')
+        
+        for file in os.listdir(dax_queries_dir):
+            
+            if file.endswith('.txt'):
+                file_name = file.split(".")[0] 
+                file_dir = os.path.join(dax_queries_dir, file)
+
+            df_query = dscmd_extract_datasets_info(workspaces_ids, file_dir)
+            load_to_sharepoint(sharepoint_site, sharepoint_folder, df_query, f'{file_name}.csv')
 
         logging.info("ETL process completed succesfully.")
 
