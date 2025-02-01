@@ -29,7 +29,7 @@ def main():
         sharepoint_folder = os.getenv('SHAREPOINT_FOLDER')
             
         # Check if all required inputs were given
-        logging.info("Check enviroments variables inputs.")
+        logging.info("Check enviroment variables.")
 
         if None in [workspaces_ids, sharepoint_site, sharepoint_folder]:
             raise ValueError('One or more required variables are missing, review .env file.')
@@ -38,7 +38,7 @@ def main():
         logging.info("Request API access tokens.")
 
         # Run ETL process
-        logging.info("Start ETL process: ")
+        logging.info("Start ETL process...")
         
         df_workspaces = extract_workspaces(workspaces_ids)
         load_to_sharepoint(sharepoint_site, sharepoint_folder, df_workspaces, 'workspaces.csv')
