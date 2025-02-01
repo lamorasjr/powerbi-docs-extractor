@@ -96,4 +96,5 @@ def load_to_sharepoint(sharepoint_site:str, sharepoint_folder:str, input_df:pd.D
     if response.status_code in [200, 201]:
         logging.info(f'Sharepoint upload completed for {file_name}. Status code: {response.status_code}.')
     else:
+        logging.error(f'Critical error for {file_name}. Status code: {response.status_code} - {response.text}.')
         raise Exception(f'Sharepoint upload failed for {file_name}. Status code: {response.status_code} - {response.text}.')
