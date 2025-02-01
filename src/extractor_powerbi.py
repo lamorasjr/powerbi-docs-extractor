@@ -4,8 +4,16 @@ import pandas as pd
 import re
 import os
 import subprocess
+import logging
 from dotenv import load_dotenv
 from urllib.parse import quote
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='{asctime} - {levelname} - {message}',
+    style='{',
+    datefmt='%Y-%m-%d %H:%M'
+)
 
 load_dotenv()
 
@@ -238,16 +246,21 @@ def dscmd_execute_query(workspace_name, dataset_name, query_file)->pd.DataFrame:
         ]
 
         try:
-            subprocess.run(prompt, capture_output=True, text=True, check=True)
+            result = subprocess.run(prompt, capture_output=True, text=True, check=True)
+
+            if result.stderr:
+                logging.warning(f"DaxStudio error: {result.stderr}")
+            
             df = pd.read_csv(output_file, encoding='utf-8', sep=';')
             data = df.to_dict('records')
             os.remove(output_file)
             return data
 
         except subprocess.CalledProcessError as e:
-            print(f"[WARNING][DaxStudio] Error to export {os.path.basename(query_file)} - return code: {e.returncode} - item: {workspace_name}/{dataset_name}.")
+            logging.warning(f"DaxStudio execution error for {os.path.basename(query_file)} - item: {workspace_name}/{dataset_name}. Error code: {e.returncode}.")
     else:
-        raise FileNotFoundError('DaxStudio was not found. Check if all requirements have been installted.')
+        logging.error('DaxStudio was not found. Check if all requirements have been met.')
+        raise FileNotFoundError('DaxStudio was not found.')
     
 
 def dscmd_extract_datasets_info(workspaces_ids:list, query_file)->pd.DataFrame:

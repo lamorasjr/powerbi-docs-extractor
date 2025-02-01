@@ -1,8 +1,16 @@
 import os
 import requests
 import pandas as pd
+import logging
 from io import BytesIO
 from dotenv import load_dotenv
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='{asctime} - {levelname} - {message}',
+    style='{',
+    datefmt='%Y-%m-%d %H:%M'
+)
 
 load_dotenv()
 
@@ -86,6 +94,6 @@ def load_to_sharepoint(sharepoint_site:str, sharepoint_folder:str, input_df:pd.D
     response = requests.put(url, headers=headers, data=csv_buffer)
 
     if response.status_code in [200, 201]:
-        print(f'[Status code: {response.status_code}] Sharepoint upload completed for {file_name}.')
+        logging.info(f'Sharepoint upload completed for {file_name}. Status code: {response.status_code}.')
     else:
-        raise Exception(f'[ERROR] Sharepoint upload failed for {file_name}. Status code: {response.status_code} - {response.text}')
+        raise Exception(f'Sharepoint upload failed for {file_name}. Status code: {response.status_code} - {response.text}.')
