@@ -3,7 +3,9 @@ import requests
 import pandas as pd
 import re
 import os
+import subprocess
 from dotenv import load_dotenv
+from urllib.parse import quote
 
 load_dotenv()
 
@@ -211,3 +213,70 @@ def extract_datasets_info_queries(workspaces_ids:list, dax_query:str)->pd.DataFr
     df = df.rename(columns=new_columns_name)
     
     return df
+
+
+def dscmd_execute_query(workspace_name, dataset_name, query_file)->pd.DataFrame:
+
+    output_file = os.path.join(os.getcwd(), 'tools', 'temp.csv')
+    
+    DSCMD = os.path.join(os.getcwd(), 'tools', 'dax_studio', 'dscmd.exe')
+
+    if os.path.exists(DSCMD):
+        TENANT_ID = os.getenv('AZURE_APP_TENANT_ID')
+        CLIENT_ID = os.getenv('AZURE_APP_CLIENT_ID')
+        CLIENT_SECRET = os.getenv('AZURE_APP_CLIENT_SECRET')
+
+        prompt = [
+            DSCMD,
+            "csv", output_file,
+            "-s", f"powerbi://api.powerbi.com/v1.0/myorg/{quote(workspace_name)}",
+            "-d", dataset_name,
+            "-u", f"app:{CLIENT_ID}@{TENANT_ID}", 
+            "-p", CLIENT_SECRET,
+            "-f", query_file,
+            "-t", "UTF8CSV"
+        ]
+
+        try:
+            subprocess.run(prompt, capture_output=True, text=True, check=True)
+            df = pd.read_csv(output_file, encoding='utf-8', sep=';')
+            data = df.to_dict('records')
+            os.remove(output_file)
+            return data
+
+        except subprocess.CalledProcessError as e:
+            print(f"[WARNING][DaxStudio] Error to export {os.path.basename(query_file)} - return code: {e.returncode} - item: {workspace_name}/{dataset_name}.")
+    else:
+        raise FileNotFoundError('DaxStudio was not found. Check if all requirements have been installted.')
+    
+
+def dscmd_extract_datasets_info(workspaces_ids:list, query_file)->pd.DataFrame:
+
+        df_ds = extract_datasets(workspaces_ids)
+        df_ds = df_ds[['DATASET_ID', 'DATASET_NAME', 'WORKSPACE_ID']]
+
+        df_ws = extract_workspaces(workspaces_ids)
+        df_ws = df_ws[['WORKSPACE_ID', 'WORKSPACE_NAME']]
+        
+        df_ids = pd.merge(df_ds, df_ws, on='WORKSPACE_ID', how='left')
+        wsds_ids = df_ids.to_dict(orient='records')
+        
+        all_data = []
+
+        for i in wsds_ids:
+            ds_name = i.get('DATASET_NAME')
+            ws_name = i.get('WORKSPACE_NAME')
+
+            response = dscmd_execute_query(ws_name, ds_name, query_file)
+
+            data = {
+                'WORKSPACE_ID': i.get('WORKSPACE_ID'),
+                'DATASET_ID' : i.get('DATASET_ID'),
+                'response' : response
+            }
+
+            all_data.append(data)
+
+        df_raw = pd.json_normalize(all_data, meta=['WORKSPACE_ID', 'DATASET_ID'], record_path='response')
+        df = df_raw.copy()
+        return df       
