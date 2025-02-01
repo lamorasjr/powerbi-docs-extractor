@@ -86,6 +86,6 @@ def load_to_sharepoint(sharepoint_site:str, sharepoint_folder:str, input_df:pd.D
     response = requests.put(url, headers=headers, data=csv_buffer)
 
     if response.status_code in [200, 201]:
-        print(f'- Upload succeeded: {file_name} - status code: {response.status_code}.')
+        print(f'[Status code: {response.status_code}] Sharepoint upload completed for {file_name}.')
     else:
-        raise Exception(f'- Upload failed: {response.status_code} - {response.text}')
+        raise Exception(f'[ERROR] Sharepoint upload failed for {file_name}. Status code: {response.status_code} - {response.text}')
