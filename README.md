@@ -42,9 +42,9 @@ This project automates the documentation process for Power BI reports and semant
 ### 1. Clone the repository:
 Clone the repository to your local machine:
 ```bash
-git clone https://github.com/lamorasjr/extract-powerbi-catalog.git
+git clone https://github.com/lamorasjr/powerbi-catalog-extractor.git
 
-cd extract-powerbi-catalog
+cd powerbi-catalog-extractor
 ```
 
 ### 2. Create the .env File:
