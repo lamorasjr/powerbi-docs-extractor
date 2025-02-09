@@ -1,4 +1,3 @@
-import json
 import requests
 import pandas as pd
 import re
@@ -41,7 +40,7 @@ def get_powerbi_token():
         raise Exception(f'Failed to obtain token: {response.status_code} - {response.text}')
 
 
-def get_powerbi_data(endpoint:str)->json:
+def get_powerbi_data(endpoint):
 
     access_token = get_powerbi_token()
 
@@ -62,7 +61,7 @@ def get_powerbi_data(endpoint:str)->json:
         raise Exception(f'Failed request - error: {response.status_code} - {response.text}')
     
     
-def execute_powerbi_dataset_query(workspace_id:str, dataset_id:str, dax_query:str)->dict:
+def execute_powerbi_dataset_query(workspace_id, dataset_id, dax_query):
 
     access_token = get_powerbi_token()
 
@@ -93,7 +92,7 @@ def execute_powerbi_dataset_query(workspace_id:str, dataset_id:str, dax_query:st
         raise Exception(f'Non-sucess status code: {response.status_code} - {response.text}')
 
 
-def extract_workspaces(workspaces_ids:list)->pd.DataFrame:
+def extract_workspaces(workspaces_ids):
 
     all_data = []
 
@@ -114,7 +113,7 @@ def extract_workspaces(workspaces_ids:list)->pd.DataFrame:
     return df
 
 
-def extract_reports(workspaces_ids:list)->pd.DataFrame:  
+def extract_reports(workspaces_ids):  
 
     all_data = []
 
@@ -140,7 +139,7 @@ def extract_reports(workspaces_ids:list)->pd.DataFrame:
     return df
 
 
-def extract_reports_pages(workspaces_ids:list)->pd.DataFrame:
+def extract_reports_pages(workspaces_ids):
 
     df_reports = extract_reports(workspaces_ids)
     
@@ -173,7 +172,7 @@ def extract_reports_pages(workspaces_ids:list)->pd.DataFrame:
     return df
 
 
-def extract_datasets(workspaces_ids:list)->pd.DataFrame:
+def extract_datasets(workspaces_ids):
     all_data = []
 
     for ws_id in workspaces_ids:
@@ -198,7 +197,7 @@ def extract_datasets(workspaces_ids:list)->pd.DataFrame:
     return df
 
 
-def extract_datasets_info_queries(workspaces_ids:list, dax_query:str)->pd.DataFrame:
+def extract_datasets_info_queries(workspaces_ids, dax_query):
     
     df_datasets = extract_datasets(workspaces_ids)
     
@@ -223,7 +222,7 @@ def extract_datasets_info_queries(workspaces_ids:list, dax_query:str)->pd.DataFr
     return df
 
 
-def dscmd_execute_query(workspace_name, dataset_name, query_file)->pd.DataFrame:
+def dscmd_execute_query(workspace_name, dataset_name, query_file):
 
     output_file = os.path.join(os.getcwd(), 'tools', 'temp.csv')
     
@@ -252,7 +251,7 @@ def dscmd_execute_query(workspace_name, dataset_name, query_file)->pd.DataFrame:
                 logging.warning(f"DaxStudio error: {result.stderr}")
             
             df = pd.read_csv(output_file, encoding='utf-8', sep=';')
-            data = df.to_dict('records')
+            data = df.to_dict(orient='records')
             os.remove(output_file)
             return data
 
@@ -263,7 +262,7 @@ def dscmd_execute_query(workspace_name, dataset_name, query_file)->pd.DataFrame:
         raise FileNotFoundError('DaxStudio was not found.')
     
 
-def dscmd_extract_datasets_info(workspaces_ids:list, query_file)->pd.DataFrame:
+def dscmd_extract_datasets_info(workspaces_ids, query_file):
 
         df_ds = extract_datasets(workspaces_ids)
         df_ds = df_ds[['DATASET_ID', 'DATASET_NAME', 'WORKSPACE_ID']]
