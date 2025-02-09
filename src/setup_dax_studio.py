@@ -13,7 +13,7 @@ logging.basicConfig(
 )
 
 
-def check_dax_studio_setup()->str:
+def check_dax_studio_setup():
     tool_dir = os.path.join(os.getcwd(), 'tools')
     tool_path = os.path.join(tool_dir, 'dax_studio' ,'dscmd.exe')
     
