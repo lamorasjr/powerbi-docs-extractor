@@ -10,7 +10,7 @@ This project automates the documentation process for Power BI reports and semant
 - **Data Catalog Management:** A Power BI integration is provided through a ready-made template, allowing for detailed reporting and analysis.
 
 
-<img src=assets\pj_diagram2.png alt="pj_diagram" width="100%"/>
+<!-- <img src=assets\pj_diagram2.png alt="pj_diagram" width="100%"/> -->
 
 
 ## Table of Contents
@@ -27,7 +27,7 @@ This project automates the documentation process for Power BI reports and semant
 
 - **Python 3.12 or greater**
 - **Power BI workspace with Premium or Fabric license**.
-- **[Azure AD application](https://learn.microsoft.com/en-us/power-bi/developer/embedded/register-app?tabs=customers)** with at least one of the following scopes:
+- **[Microsoft Entra App](https://learn.microsoft.com/en-us/power-bi/developer/embedded/register-app?tabs=customers)** with at least one of the following scopes:
   - **Power BI Service**:
     - `Workspace.Read.All`
     - `Workspace.ReadWrite.All`
@@ -50,7 +50,7 @@ cd powerbi-catalog-extractor
 ### 2. Create the .env File:
 * A `.env` file is required to run the project.
 * Create a `.env` file in the root directory of the project.
-* Copy the content from .env-example and update it with your Azure application credentials, source workspaces ids, and target sharepoint details.
+* Copy the content from .env-example and update it with your Microsoft Entra app credentials, source workspaces ids, and details of the target sharepoint.
 
 ### 3. Install Dependencies and Run the Application
 
