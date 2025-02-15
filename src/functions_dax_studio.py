@@ -111,12 +111,17 @@ if __name__ == "__main__":
     
     output_dir = os.path.join(os.getcwd(), "data")
     os.makedirs(output_dir, exist_ok=True)
-
-    dax_query_file = os.path.join(os.getcwd(), "dax_queries", "tables_info.txt")
-    dax_query_name = os.path.basename(dax_query_file).split(".")[0]
     
     workspaces_ids = [ i.strip() for i in os.getenv('PBI_WORKSPACES_IDS').split(",") ]
     workspaces_datasets = generate_workspaces_datasets_list(workspaces_ids)
 
-    df = extract_dataset_info(workspaces_datasets, dax_query_file)
-    df.to_csv(f"{output_dir}/{dax_query_name}.csv", index=False, encoding="utf-8", sep=";")
+    queries_dir = os.path.join(os.getcwd(), "dax_queries")
+    
+    for file in os.listdir(queries_dir):
+        if file.endswith('.txt'):
+            file_name = file.split(".")[0]
+            file_dir = os.path.join(queries_dir, file)
+
+            df_query = extract_dataset_info(workspaces_datasets, file_dir)
+            df_query.to_csv(f"{output_dir}/{file_name}.csv", index=False, encoding="utf-8", sep=";")
+            
