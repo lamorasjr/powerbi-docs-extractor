@@ -160,18 +160,35 @@ def extract_reports_pages(df_reports):
     return df
 
 
+def generate_workspaces_datasets_list(workspaces_ids):
+    """
+    Generate a list of workspaces and datasets names and ids.
+    """
+    df_datasets = extract_datasets(workspaces_ids)
+    df_datasets = df_datasets[['DATASET_ID', 'DATASET_NAME', 'WORKSPACE_ID']]
+
+    df_workspaces = extract_workspaces(workspaces_ids)
+    df_workspaces = df_workspaces[['WORKSPACE_ID', 'WORKSPACE_NAME']]
+    
+    df_all = pd.merge(df_datasets, df_workspaces, on='WORKSPACE_ID', how='left')
+    data = df_all.to_dict(orient='records')
+    return data
+
     
 if __name__ == "__main__":
-    workspaces_ids = [ i.strip() for i in os.getenv('PBI_WORKSPACES_IDS').split(",") ]
+    output_dir = os.path.join(os.getcwd(), "data")
+    os.makedirs(output_dir, exist_ok=True)
     
+    workspaces_ids = [ i.strip() for i in os.getenv('PBI_WORKSPACES_IDS').split(",") ]
+
     df_workspaces = extract_workspaces(workspaces_ids)
-    print(df_workspaces.head())
+    df_workspaces.to_csv(f"{output_dir}/workspace.csv", index=False, encoding="utf-8", sep=";")
 
     df_datasets = extract_datasets(workspaces_ids)
-    print(df_datasets.head())
-
+    df_datasets.to_csv(f"{output_dir}/datasets.csv", index=False, encoding="utf-8", sep=";")
+    
     df_reports = extract_reports(workspaces_ids)
-    print(df_reports.head())
-
+    df_reports.to_csv(f"{output_dir}/reports.csv", index=False, encoding="utf-8", sep=";")
+    
     df_reports_pages = extract_reports_pages(df_reports)
-    print(df_reports_pages.head())
+    df_reports_pages.to_csv(f"{output_dir}/reports_pages.csv", index=False, encoding="utf-8", sep=";")
