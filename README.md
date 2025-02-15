@@ -3,7 +3,7 @@
 This project automates the documentation process for Power BI reports and semantic models across multiple workspaces in the Power BI service.
 
 ### Key features include:
-- **Metadata Extraction from Power BI Premium Workspaces:** For each defined workspace, the project extracts data from various components, including Workspaces, Reports, Report Pages, Semantic Models, Tables, Measures, Relationships, Calculation Groups, and Calculation Items.
+- **Extraction of structural information of Power BI Artifacts in Power BI Premium Workspaces:** For each defined workspace, the script extracts data from various components, including Workspaces, Reports, Report Pages, Semantic Models, Tables, Measures, Relationships, Calculation Groups, and Calculation Items.
 
 - **Data Storage:** The extracted metadata is saved as CSV files in a SharePoint folder, enabling centralized access.
 
