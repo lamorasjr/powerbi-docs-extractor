@@ -89,14 +89,13 @@ def extract_dataset_info(workspaces_datasets_list, dax_query_file):
 
         response = extract_dax_query_dscmd(workspace_name, dataset_name, dax_query_file)
 
-        for r in response:
-            data = {
-                'WORKSPACE_ID': i.get("WORKSPACE_ID"),
-                'DATASET_ID' : i.get('DATASET_ID'),
-                'response' : response
-            }
+        data = {
+            'WORKSPACE_ID': i.get("WORKSPACE_ID"),
+            'DATASET_ID' : i.get('DATASET_ID'),
+            'response' : response
+        }
 
-            all_data.append(data)
+        all_data.append(data)
 
     df_raw = pd.json_normalize(all_data, meta=['WORKSPACE_ID', 'DATASET_ID'], record_path='response')
     df = df_raw.copy()
@@ -109,7 +108,7 @@ def extract_dataset_info(workspaces_datasets_list, dax_query_file):
 if __name__ == "__main__":
     setup_dax_studio()
     
-    output_dir = os.path.join(os.getcwd(), "data")
+    output_dir = os.path.join(os.getcwd(), "test")
     os.makedirs(output_dir, exist_ok=True)
     
     workspaces_ids = [ i.strip() for i in os.getenv('PBI_WORKSPACES_IDS').split(",") ]

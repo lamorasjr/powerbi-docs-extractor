@@ -176,7 +176,7 @@ def generate_workspaces_datasets_list(workspaces_ids):
 
     
 if __name__ == "__main__":
-    output_dir = os.path.join(os.getcwd(), "data")
+    output_dir = os.path.join(os.getcwd(), "test")
     os.makedirs(output_dir, exist_ok=True)
     
     workspaces_ids = [ i.strip() for i in os.getenv('PBI_WORKSPACES_IDS').split(",") ]
