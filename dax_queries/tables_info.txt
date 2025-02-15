@@ -1,0 +1,30 @@
+DEFINE
+VAR stg_tables_info =
+SELECTCOLUMNS(
+	FILTER(
+		INFO.TABLES(),
+		[ExcludeFromModelRefresh] = FALSE()
+	),
+	"TABLE_ID", [ID],
+	"TABLE_NAME", [Name],
+	"DATA_CATEGORY", IF([DataCategory]="Time", "Time", "Regular"),
+	"DESCRIPTION", [Description],
+	"IS_HIDDEN", [IsHidden],
+	"MODIFIED_AT", [ModifiedTime],
+	"TABLE_TYPE", IF([SystemFlags]=0, IF([CalculationGroupID] <> BLANK(), "Calculation Group", "Power Query"), "Calculated Table"),
+	"CALCULATION_GROUP_FLAG", IF([CalculationGroupID] <> BLANK(), 1, 0)
+)
+
+VAR stg_tables_query_definition =
+SELECTCOLUMNS(
+	INFO.PARTITIONS(),
+	"TABLE_ID", [TableID],
+	"QUERY_DEFINITION", [QueryDefinition],
+	"TYPE", SWITCH( [Type], 4, "M", 2, "DAX", 7, "Interno" )
+)
+
+EVALUATE
+NATURALLEFTOUTERJOIN(
+	stg_tables_info,
+	stg_tables_query_definition
+)

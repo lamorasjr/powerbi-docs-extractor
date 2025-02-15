@@ -1,0 +1,80 @@
+DEFINE
+VAR tables_info = INFO.TABLES()
+VAR columns_info = INFO.COLUMNS()
+VAR relationships_info = INFO.RELATIONSHIPS()
+
+VAR stg_relationships =  
+SELECTCOLUMNS(
+	INFO.RELATIONSHIPS(),
+	"RELATIONSHIP_ID", [ID],
+	"RELATIONSHIP", SWITCH([FromCardinality], 1, "One", 2, "Many") &
+					SWITCH([CrossFilteringBehavior], 1, " <--- ", 2, " <---> ") &
+					SWITCH([ToCardinality], 1, "One", 2, "Many"),
+	"FROM_TABLE_ID", [FromTableID],
+	"FROM_COLUMN_ID", [FromColumnID],
+	"FROM_CARDINALITY_ID", [FromCardinality],
+	"FROM_CARDINALITY", SWITCH([FromCardinality], 1, "One", 2, "Many"),
+	"TO_TABLE_ID", [ToTableID],
+	"TO_COLUMN_ID", [ToColumnID],
+	"TO_CARDINALITY_ID", [ToCardinality],
+	"TO_CARDINALITY", SWITCH([ToCardinality], 1, "One", 2, "Many"),
+	"CROSS_FILTERING_BEHAVIOR_ID", [CrossFilteringBehavior],
+	"CROSS_FILTERING_BEHAVIOR", SWITCH([CrossFilteringBehavior], 1, "Single", 2, "Both", BLANK()),
+	"IS_ACTIVE", [IsActive],
+	"SECURITY_FILTERING_BEHAVIOR_ID", [SecurityFilteringBehavior],
+	"SECURITY_FILTERING_BEHAVIOR", SWITCH([SecurityFilteringBehavior], 1, "Single", 2, "Both", BLANK()),
+	"MODIFIED_AT", [ModifiedTime]
+)
+
+VAR stg_columns =
+ADDCOLUMNS(
+	FILTER(
+		columns_info,
+		[Type] <> 3
+	),
+	"TABLE_NAME",
+	VAR _table_id = [TableID] RETURN
+	MAXX(FILTER(tables_info, [ID] = _table_id), [Name])
+)
+
+VAR relationships_mapped =
+ADDCOLUMNS(
+    stg_relationships,
+    "FROM_TABLE",
+		VAR from_table = [FROM_TABLE_ID]
+		RETURN MAXX(FILTER(stg_columns, [TableID] = from_table), [TABLE_NAME]),
+    "TO_TABLE",
+		VAR to_table = [TO_TABLE_ID] 
+		RETURN MAXX(FILTER(stg_columns, [TableID] = to_table), [TABLE_NAME]),
+    "FROM_COLUMN",
+		VAR from_column = [FROM_COLUMN_ID] 
+		RETURN MAXX( FILTER( stg_columns, [ID] = from_column ), COALESCE( [ExplicitName], [InferredName] ) ),
+    "TO_COLUMN",
+	VAR to_column = [TO_COLUMN_ID]
+	RETURN MAXX( FILTER( stg_columns, [ID] = to_column ), COALESCE( [ExplicitName], [InferredName] ) )
+)
+
+EVALUATE 
+SELECTCOLUMNS(
+	relationships_mapped,
+	[RELATIONSHIP_ID],
+	[RELATIONSHIP],
+	[FROM_TABLE_ID],
+	[FROM_TABLE],
+	[FROM_COLUMN_ID],
+	[FROM_COLUMN],
+	[FROM_CARDINALITY_ID],
+	[FROM_CARDINALITY],
+	[TO_CARDINALITY_ID],
+	[TO_CARDINALITY],
+	[TO_TABLE_ID],
+	[TO_TABLE],
+	[TO_COLUMN_ID],
+	[TO_COLUMN],
+	[IS_ACTIVE],
+	[CROSS_FILTERING_BEHAVIOR_ID],
+	[CROSS_FILTERING_BEHAVIOR],
+	[SECURITY_FILTERING_BEHAVIOR_ID],
+	[SECURITY_FILTERING_BEHAVIOR],
+	[MODIFIED_AT]
+)

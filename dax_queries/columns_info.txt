@@ -1,0 +1,36 @@
+EVALUATE
+SELECTCOLUMNS(
+	FILTER(
+		INFO.COLUMNS(),
+		[Type] <> 3
+	),
+	"COLUMN_ID", [ID],
+	"TABLE_ID", [TableID],
+	"COLUMN_NAME", COALESCE([ExplicitName], [InferredName]),
+	"COLUMN_TYPE_ID", [Type],
+	"COLUMN_TYPE", SWITCH([Type],
+						1, "Data Column",
+						2, "Calculated Column",
+						3, "Row Number",
+						4, "Calculated Table Column",
+						BLANK()
+					),
+	"DAX_EXPRESSION", [Expression],
+	"DATA_TYPE_ID", IF([ExplicitDataType] <> 1, [ExplicitDataType], [InferredDataType]),
+	"DATA_TYPE", SWITCH(
+						IF([ExplicitDataType] <> 1, [ExplicitDataType], [InferredDataType]),
+						2, "Text",
+						6, "Integer",
+						8, "Decimal",
+						9, "DateTime",
+						10, "Currency",
+						11, "Boolean",
+						20, "Percentage",
+						BLANK()
+					),
+	"DATA_CATEGORY", [DataCategory],
+	"DESCRIPTION", [Description],
+	"IS_HIDDEN", [IsHidden],
+	"MODIFIED_AT", [ModifiedTime],
+	"DISPLAY_FOLDER", [DisplayFolder]
+)
