@@ -44,28 +44,28 @@ def main():
         # Run ETL process
         logging.info("Start ETL process...")
         
-        output_dir = os.path.join(os.getcwd(), "data")
-        os.makedirs(output_dir, exist_ok=True)
+        # output_dir = os.path.join(os.getcwd(), "data")
+        # os.makedirs(output_dir, exist_ok=True)
 
         logging.info("Extracting workspaces...")
         df_workspaces = extract_workspaces(workspaces_ids)
-        df_workspaces.to_csv(f"{output_dir}/workspace.csv", index=False, encoding="utf-8", sep=";")
-        # load_to_sharepoint(sharepoint_site, sharepoint_folder, df_workspaces, 'workspaces.csv')
+        load_to_sharepoint(sharepoint_site, sharepoint_folder, df_workspaces, 'workspaces.csv')
+        # df_workspaces.to_csv(f"{output_dir}/workspace.csv", index=False, encoding="utf-8", sep=";")
 
         logging.info("Extracting datasets...")
         df_datasets = extract_datasets(workspaces_ids)
-        df_datasets.to_csv(f"{output_dir}/datasets.csv", index=False, encoding="utf-8", sep=";")
-        # load_to_sharepoint(sharepoint_site, sharepoint_folder, df_datasets, 'datasets.csv')
+        load_to_sharepoint(sharepoint_site, sharepoint_folder, df_datasets, 'datasets.csv')
+        # df_datasets.to_csv(f"{output_dir}/datasets.csv", index=False, encoding="utf-8", sep=";")
 
         logging.info("Extracting reports...")
         df_reports = extract_reports(workspaces_ids)
-        df_reports.to_csv(f"{output_dir}/reports.csv", index=False, encoding="utf-8", sep=";")
-        # load_to_sharepoint(sharepoint_site, sharepoint_folder, df_reports, 'reports.csv')
+        load_to_sharepoint(sharepoint_site, sharepoint_folder, df_reports, 'reports.csv')
+        # df_reports.to_csv(f"{output_dir}/reports.csv", index=False, encoding="utf-8", sep=";")
         
         logging.info("Extracting reports_pages...")
         df_reports_pages = extract_reports_pages(df_reports)
-        df_reports_pages.to_csv(f"{output_dir}/reports_pages.csv", index=False, encoding="utf-8", sep=";")
-        # load_to_sharepoint(sharepoint_site, sharepoint_folder, df_reports_pages, 'reports_pages.csv')
+        load_to_sharepoint(sharepoint_site, sharepoint_folder, df_reports_pages, 'reports_pages.csv')
+        # df_reports_pages.to_csv(f"{output_dir}/reports_pages.csv", index=False, encoding="utf-8", sep=";")
 
         workspaces_datasets = generate_workspaces_datasets_list(workspaces_ids)
 
@@ -78,9 +78,8 @@ def main():
                 
                 logging.info(f"Extracting {file_name}...")
                 df_query = extract_dataset_info(workspaces_datasets, file_dir)
-                df_query.to_csv(f"{output_dir}/{file_name}.csv", index=False, encoding="utf-8", sep=";")
-                
-                # load_to_sharepoint(sharepoint_site, sharepoint_folder, df_query, f'{file_name}.csv')
+                load_to_sharepoint(sharepoint_site, sharepoint_folder, df_query, f'{file_name}.csv')
+                # df_query.to_csv(f"{output_dir}/{file_name}.csv", index=False, encoding="utf-8", sep=";")
 
         logging.info("ETL process completed succesfully.")
 
