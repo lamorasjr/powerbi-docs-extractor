@@ -86,7 +86,7 @@ def load_to_sharepoint(sharepoint_site, sharepoint_folder, input_df:pd.DataFrame
     drive_id = get_sharepoint_drive_id(site_id)
 
     csv_buffer = BytesIO()
-    input_df.to_csv(csv_buffer, index=False)
+    input_df.to_csv(csv_buffer, index=False, encoding="utf-8", sep=";")
     csv_buffer.seek(0)
 
     url = f'https://graph.microsoft.com/v1.0/drives/{drive_id}/root:/{sharepoint_folder}/{file_name}:/content'
