@@ -69,7 +69,6 @@ def main():
 
         workspaces_datasets = generate_workspaces_datasets_list(workspaces_ids)
 
-        logging.info("Extracting datasets_info...")
         queries_dir = os.path.join(os.getcwd(), "dax_queries")
         
         for file in os.listdir(queries_dir):
@@ -78,11 +77,10 @@ def main():
                 file_dir = os.path.join(queries_dir, file)
                 
                 logging.info(f"Extracting {file_name}...")
-
                 df_query = extract_dataset_info(workspaces_datasets, file_dir)
                 df_query.to_csv(f"{output_dir}/{file_name}.csv", index=False, encoding="utf-8", sep=";")
                 
-            # load_to_sharepoint(sharepoint_site, sharepoint_folder, df_query, f'{file_name}.csv')
+                # load_to_sharepoint(sharepoint_site, sharepoint_folder, df_query, f'{file_name}.csv')
 
         logging.info("ETL process completed succesfully.")
 

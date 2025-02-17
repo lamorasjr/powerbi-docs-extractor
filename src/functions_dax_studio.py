@@ -44,7 +44,7 @@ def extract_dax_query_dscmd(workspace_name, dataset_name, dax_query_file):
     Excecute a dax query in Power BI workspaces with Dax Studio Portable.
     """
     DSCMD = os.path.join(os.getcwd(), "tools", "dax_studio", "dscmd.exe")
-    temp_file = "C:/Users/lamoras/workspace/powerbi-catalog-extractor/tools/temp.json"    
+    temp_file = os.path.join(os.getcwd(), "tools", "temp.json")
 
     tenant_id = os.getenv("PBI_TENANT_ID")
     client_id = os.getenv("PBI_CLIENT_ID")
@@ -62,6 +62,8 @@ def extract_dax_query_dscmd(workspace_name, dataset_name, dax_query_file):
     ]
 
     try:
+        print(f'Dax Studio: Extraction of Workspace/Dataset: "{workspace_name}"/"{dataset_name}".')
+        
         result = subprocess.run(prompt, capture_output=True, text=True, check=True)
 
         result_output = result.stdout.split("\n")
@@ -69,7 +71,7 @@ def extract_dax_query_dscmd(workspace_name, dataset_name, dax_query_file):
             if "Exporting to file" not in line :
                 print(line)
         
-        with open(temp_file, "r") as file:
+        with open(temp_file, "r", encoding="utf-8") as file:
             json_data = json.load(file)
         
         data = json_data["results"][0]["tables"][0]["rows"]
@@ -77,7 +79,7 @@ def extract_dax_query_dscmd(workspace_name, dataset_name, dax_query_file):
         return data
     
     except subprocess.CalledProcessError as e:
-        print(f"Dax Studio extraction failed for {os.path.basename(dax_query_file)}/{workspace_name}/{dataset_name} - Error details: {e.stdout} {e.stderr}.")
+        print(f"Dax Studio: Failed extraction of {os.path.basename(dax_query_file)} for {workspace_name}/{dataset_name} - Error details: {e.stdout} {e.stderr}.")
 
 
 def extract_dataset_info(workspaces_datasets_list, dax_query_file):
