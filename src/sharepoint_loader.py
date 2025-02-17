@@ -1,23 +1,18 @@
 import os
 import requests
 import pandas as pd
-import logging
 from io import BytesIO
 from dotenv import load_dotenv
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='{asctime} - {levelname} - {message}',
-    style='{',
-    datefmt='%Y-%m-%d %H:%M'
-)
-
 load_dotenv()
 
-def get_sharepoint_token()->str:
-    TENANT_ID = os.getenv('AZURE_APP_TENANT_ID')
-    CLIENT_ID = os.getenv('AZURE_APP_CLIENT_ID')
-    CLIENT_SECRET = os.getenv('AZURE_APP_CLIENT_SECRET')
+def get_sharepoint_token():
+    """
+    Generate an access token for sharepoint
+    """
+    TENANT_ID = os.getenv('PBI_TENANT_ID')
+    CLIENT_ID = os.getenv('PBI_CLIENT_ID')
+    CLIENT_SECRET = os.getenv('PBI_CLIENT_SECRET')
 
     url = f'https://login.microsoftonline.com/{TENANT_ID}/oauth2/v2.0/token'
 
@@ -33,11 +28,14 @@ def get_sharepoint_token()->str:
         data = response_json['access_token']
         return data
     else:
-        raise Exception(f'Failed to obtain token: {response.status_code} - {response.text}')
+        raise KeyError(f'Failed to obtain token: {response.status_code} - {response.text}')
 
 
-
-def get_sharepoint_site_id(access_token:str, site_name:str)->str:
+def get_sharepoint_site_id(site_name):
+    """
+    For a given sharepoint site, returns the site id.
+    """
+    access_token = get_sharepoint_token()
 
     url = f'https://graph.microsoft.com/v1.0/sites?search={site_name}'
     
@@ -52,10 +50,14 @@ def get_sharepoint_site_id(access_token:str, site_name:str)->str:
         return site_id
     
     else:
-        raise Exception(f'Error to get Sharepoint site id: {response.status_code} - {response.text}')
+        raise KeyError(f'Error to get Sharepoint Site Id: {response.status_code} - {response.text}')
     
 
-def get_sharepoint_drive_id(access_token:str, site_id:str)->str:
+def get_sharepoint_drive_id(site_id):
+    """
+    For a given sharepoint site id, returns the drive id.
+    """
+    access_token = get_sharepoint_token()
 
     url = f'https://graph.microsoft.com/v1.0/sites/{site_id}/drives'
     
@@ -70,15 +72,18 @@ def get_sharepoint_drive_id(access_token:str, site_id:str)->str:
         return drive_id
     
     else:
-        raise Exception(f'Error to get Sharepoint drive id: {response.status_code} - {response.text}')
+        raise KeyError(f'Error to get Sharepoint Drive Id: {response.status_code} - {response.text}')
     
 
-def load_to_sharepoint(sharepoint_site:str, sharepoint_folder:str, input_df:pd.DataFrame, file_name:str):
+def load_to_sharepoint(sharepoint_site, sharepoint_folder, input_df:pd.DataFrame, file_name):
+    """
+    Convert and upload a Pandas DataFrame in a given Sharepoint Site and Folder.
+    """
     access_token = get_sharepoint_token()
 
-    site_id = get_sharepoint_site_id(access_token, os.path.basename(sharepoint_site))
-    
-    drive_id = get_sharepoint_drive_id(access_token, site_id)
+    site_id = get_sharepoint_site_id(os.path.basename(sharepoint_site))
+
+    drive_id = get_sharepoint_drive_id(site_id)
 
     csv_buffer = BytesIO()
     input_df.to_csv(csv_buffer, index=False)
@@ -94,7 +99,6 @@ def load_to_sharepoint(sharepoint_site:str, sharepoint_folder:str, input_df:pd.D
     response = requests.put(url, headers=headers, data=csv_buffer)
 
     if response.status_code in [200, 201]:
-        logging.info(f'Sharepoint upload completed for {file_name}. Status code: {response.status_code}.')
+        print(f'Sharepoint: Success to upload "{file_name}". Status code: {response.status_code}.')
     else:
-        logging.error(f'Critical error for {file_name}. Status code: {response.status_code} - {response.text}.')
-        raise Exception(f'Sharepoint upload failed for {file_name}. Status code: {response.status_code} - {response.text}.')
+        raise requests.HTTPError(f'Sharepoint: Failed to "{file_name}". Status code: {response.status_code} - {response.text}.')
