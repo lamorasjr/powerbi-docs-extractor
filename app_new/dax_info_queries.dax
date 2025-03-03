@@ -1,0 +1,211 @@
+DEFINE
+// views for relationships view
+VAR src_info_tables = INFO.TABLES()
+VAR src_columns_info = INFO.COLUMNS()
+
+VAR stg_relationships =  
+SELECTCOLUMNS(
+	INFO.RELATIONSHIPS(),
+	"relationship_id", [ID],
+	"relationship", SWITCH([FromCardinality], 1, "One", 2, "Many") &
+					SWITCH([CrossFilteringBehavior], 1, " <--- ", 2, " <---> ") &
+					SWITCH([ToCardinality], 1, "One", 2, "Many"),
+	"from_table_id", [FromTableID],
+	"from_column_id", [FromColumnID],
+	"from_cardinality_id", [FromCardinality],
+	"from_cardinality", SWITCH([FromCardinality], 1, "One", 2, "Many"),
+	"to_table_id", [ToTableID],
+	"to_column_id", [ToColumnID],
+	"to_cardinality_id", [ToCardinality],
+	"to_cardinality", SWITCH([ToCardinality], 1, "One", 2, "Many"),
+	"cross_filtering_behavior_id", [CrossFilteringBehavior],
+	"cross_filtering_behavior", SWITCH([CrossFilteringBehavior], 1, "Single", 2, "Both", BLANK()),
+	"is_active_flag", IF([IsActive], 1, 0),
+	"security_filtering_behavior_id", [SecurityFilteringBehavior],
+	"security_filtering_behavior", SWITCH([SecurityFilteringBehavior], 1, "Single", 2, "Both", BLANK()),
+	"modified_at", [ModifiedTime]
+)
+
+VAR stg_columns_tables_lookup =
+ADDCOLUMNS(
+	FILTER(
+		src_columns_info,
+		[Type] <> 3
+	),
+	"TABLE_NAME",
+	VAR _table_id = [TableID] RETURN
+	MAXX(FILTER(src_info_tables, [ID] = _table_id), [Name])
+)
+
+VAR relationships_mapped =
+ADDCOLUMNS(
+    stg_relationships,
+    "FROM_TABLE",
+		VAR from_table = [FROM_TABLE_ID]
+		RETURN MAXX(FILTER(stg_columns_tables_lookup, [TableID] = from_table), [TABLE_NAME]),
+    "TO_TABLE",
+		VAR to_table = [TO_TABLE_ID] 
+		RETURN MAXX(FILTER(stg_columns_tables_lookup, [TableID] = to_table), [TABLE_NAME]),
+    "FROM_COLUMN",
+		VAR from_column = [FROM_COLUMN_ID] 
+		RETURN MAXX( FILTER( stg_columns_tables_lookup, [ID] = from_column ), COALESCE( [ExplicitName], [InferredName] ) ),
+    "TO_COLUMN",
+	VAR to_column = [TO_COLUMN_ID]
+	RETURN MAXX( FILTER( stg_columns_tables_lookup, [ID] = to_column ), COALESCE( [ExplicitName], [InferredName] ) )
+)
+
+VAR final_relationships_view =
+SELECTCOLUMNS(
+	relationships_mapped,
+	[relationship_id],
+	[relationship],
+	[from_table_id],
+	[from_table],
+	[from_column_id],
+	[from_column],
+	[from_cardinality_id],
+	[from_cardinality],
+	[to_cardinality_id],
+	[to_cardinality],
+	[to_table_id],
+	[to_table],
+	[to_column_id],
+	[to_column],
+	[is_active_flag],
+	[cross_filtering_behavior_id],
+	[cross_filtering_behavior],
+	[security_filtering_behavior_id],
+	[security_filtering_behavior],
+	[modified_at]
+)
+
+// views for tables view
+VAR stg_tables_info =
+SELECTCOLUMNS(
+	FILTER(
+		INFO.TABLES(),
+		[CalculationGroupID] <> 1
+	),
+	"table_id", [ID],
+	"table_name", [Name],
+	"data_category", IF([DataCategory]="Time", "Time", "Regular"),
+	"description", [Description],
+	"is_hidden_flag", IF([IsHidden], 1, 0),
+	"modified_at", [ModifiedTime],
+	"table_type", IF([SystemFlags]=0, IF([CalculationGroupID] <> BLANK(), "Calculation Group", "Power Query Table"), "DAX Table")
+)
+
+VAR stg_tables_query_definition =
+SELECTCOLUMNS(
+	INFO.PARTITIONS(),
+	"table_id", [TableID],
+	"definition", [QueryDefinition],
+	"type", SWITCH( [Type], 4, "M", 2, "DAX", 7, "Interno" )
+)
+
+VAR final_tables_view =
+NATURALLEFTOUTERJOIN(
+	stg_tables_info,
+	stg_tables_query_definition
+)
+
+// views for columns view
+VAR final_columns_view =
+SELECTCOLUMNS(
+	FILTER(
+		INFO.COLUMNS(),
+		[Type] <> 3
+	),
+	"column_id", [ID],
+	"table_id", [TableID],
+	"column_name", COALESCE([ExplicitName], [InferredName]),
+	"column_type_id", [Type],
+	"column_type", SWITCH([Type],
+						1, "M",
+						2, "DAX",
+						3, "Row Number",
+						4, "Auto-generated/Parameter",
+						BLANK()
+					),
+	"dax_expression", [Expression],
+	"data_type_id", IF([ExplicitDataType] <> 1, [ExplicitDataType], [InferredDataType]),
+	"data_type", SWITCH(
+						IF([ExplicitDataType] <> 1, [ExplicitDataType], [InferredDataType]),
+						2, "Text",
+						6, "Integer",
+						8, "Decimal",
+						9, "DateTime",
+						10, "Currency",
+						11, "Boolean",
+						20, "Percentage",
+						BLANK()
+					),
+	"data_category", [DataCategory],
+	"description", [Description],
+	"is_hidden_flag", IF([IsHidden], 1, 0),
+	"modified_at", [ModifiedTime],
+	"display_folder", [DisplayFolder]
+)
+
+//views for measures view
+VAR final_measures_view =
+	SELECTCOLUMNS(
+		FILTER(
+			INFO.MEASURES(),
+			[IsSimpleMeasure] = FALSE()
+		),
+		"measure_id", [ID],
+		"table_id", [TableID],
+		"measure_name", [Name],
+		"description", [Description],
+		"data_type_id", [DataType],
+		"data_type", SWITCH(
+			[DataType],
+			2, "String",
+			6, "Integer",
+			8, "Decimal",
+			9, "DateTime",
+			10, "Currency",
+			11, "Boolean",
+			20, "Percentage",
+			BLANK()
+		),
+		"format_string", [FormatString],
+		"dax_expression", [Expression],
+		"display_folder", [DisplayFolder],
+		"is_hidden", IF([IsHidden], 1, 0),
+		"modified_at", [ModifiedTime]
+	)
+	
+//views for calculation_groups
+VAR stg_calculation_group =
+SELECTCOLUMNS(
+	INFO.CALCULATIONGROUPS(),
+	"calc_group_id", [ID],
+	"table_id", [ID],
+	"calc_group_description", [Description],
+	"precedence", [Precedence]
+)
+
+VAR stg_calculation_items =
+SELECTCOLUMNS(
+	INFO.CALCULATIONITEMS(),
+	"calc_group_id", [CalculationGroupID],
+	"calc_item_id", [ID],
+	"calc_item_name", [Name],
+	"expression", [Expression],
+	"calc_item_description", [Description],
+	"modified_at", [ModifiedTime]
+)
+
+VAR final_calculation_groups_view =
+NATURALLEFTOUTERJOIN(
+	stg_calculation_items,
+	stg_calculation_group
+)
+
+EVALUATE final_relationships_view
+EVALUATE final_tables_view
+EVALUATE final_columns_view
+EVALUATE final_measures_view
+EVALUATE final_calculation_groups_view
