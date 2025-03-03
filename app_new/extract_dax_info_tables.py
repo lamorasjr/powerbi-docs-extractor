@@ -4,21 +4,11 @@ import subprocess
 from urllib.parse import quote
 from datetime import datetime
 
-def dscmd_export_to_json(tenant_id, client_id, client_secret, server, dataset_name, file_name):
+def dscmd_export_to_json(tenant_id, client_id, client_secret, server, dataset_name, dax_query_file, file_name):
     """
     Outputs a json file based on the results of a DAX query with Dax Studio Portable.
     """
     dscmd_exe = os.path.join(os.getcwd(), "tools", "dax_studio", "dscmd.exe")
-
-    dax_query = """
-    EVALUATE INFO.TABLES()
-    EVALUATE INFO.PARTITIONS()
-    EVALUATE INFO.COLUMNS()
-    EVALUATE INFO.MEASURES()
-    EVALUATE INFO.RELATIONSHIPS()
-    EVALUATE INFO.CALCULATIONGROUPS()
-    EVALUATE INFO.CALCULATIONITEMS()
-    """
 
     prompt = [
         dscmd_exe,
@@ -27,7 +17,7 @@ def dscmd_export_to_json(tenant_id, client_id, client_secret, server, dataset_na
         "-d", dataset_name,
         "-u", f"app:{client_id}@{tenant_id}", 
         "-p", client_secret,
-        "-q", dax_query,
+        "-f", dax_query_file,
         "-t", "JSON"
     ]
 
@@ -40,6 +30,7 @@ def extract_datasets_dax_info(tenant_id, client_id, client_secret, workspaces_da
     """
     timestamp = datetime.now()
     temp_file = os.path.join(os.getcwd(), "tools", "temp.json")
+    dax_query_file = os.path.join(os.getcwd(), "src", "dax_info_queries.dax")
 
     data = []
 
@@ -52,7 +43,7 @@ def extract_datasets_dax_info(tenant_id, client_id, client_secret, workspaces_da
         server = f"powerbi://api.powerbi.com/v1.0/myorg/{quote(workspace_name)}"
 
         try: 
-            dscmd_export_to_json(tenant_id, client_id, client_secret, server, dataset_name, temp_file)
+            dscmd_export_to_json(tenant_id, client_id, client_secret, server, dataset_name, dax_query_file, temp_file)
 
             with open(temp_file, "r", encoding="utf-8") as file:
                 dscmd_data = json.load(file)
@@ -70,19 +61,15 @@ def extract_datasets_dax_info(tenant_id, client_id, client_secret, workspaces_da
             for i, v in enumerate(response):
                 
                 if i == 0:
-                    response_data["info_tables"] = v.get("rows")
+                    response_data["info_relationships"] = v.get("rows")
                 if i == 1:
-                    response_data["info_partitions"] = v.get("rows")
+                    response_data["info_tables"] = v.get("rows")
                 if i == 2:
                     response_data["info_columns"] = v.get("rows")
                 if i == 3:
                     response_data["info_measures"] = v.get("rows")
                 if i == 4:
-                    response_data["info_relationships"] = v.get("rows")
-                if i == 5:
-                    response_data["info_calculationgroups"] = v.get("rows")
-                if i == 6:
-                    response_data["info_calculationitems"] = v.get("rows")
+                    response_data["info_calculation_groups"] = v.get("rows")
 
             data.append(response_data)
                     
