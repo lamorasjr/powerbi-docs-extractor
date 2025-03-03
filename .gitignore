@@ -3,6 +3,7 @@
 *.xlsx
 *.parquet
 .DS_Store
+*.json
 
 # Power BI pbip cache
 **/.pbi/localSettings.json
