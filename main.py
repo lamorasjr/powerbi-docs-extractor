@@ -40,9 +40,10 @@ PBI_CLIENT_ID = os.getenv("PBI_CLIENT_ID")
 PBI_CLIENT_SECRET = os.getenv("PBI_CLIENT_SECRET")
 SHAREPOINT_SITE_URL = os.getenv("SHAREPOINT_SITE_URL")
 SHAREPOINT_RELATIVE_URL = os.getenv("SHAREPOINT_RELATIVE_URL")
+LOCAL_EXTRACT = os.getenv("LOCAL_EXTRACT")
 LOCAL_OUTPUT_DIR = os.getenv("LOCAL_OUTPUT_DIR")
 
-def main(load_type=None):  
+def main():  
     try:
         logging.info("Starting Power BI Docs extractor...")
 
@@ -85,7 +86,7 @@ def main(load_type=None):
         sheet_names = ["Workspaces", "Reports", "Reports Pages", "Semantic Models", "Tables", "Columns", "Measures", "Calculation Groups", "Relationships"]
         file_name = "PowerBI_Docs.xlsx"
         
-        if load_type == "local":
+        if LOCAL_EXTRACT == "Y":
             file_name = os.path.join(LOCAL_OUTPUT_DIR, "PowerBI_Docs.xlsx")
             export_dataframes_to_excel(file_name, dataframes, sheet_names)
             logging.info("Succesfully completed the Power BI Docs extraction.")

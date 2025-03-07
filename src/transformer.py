@@ -1,4 +1,3 @@
-import re
 import pandas as pd
 
 def transform_workspaces(workspaces_data):

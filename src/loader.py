@@ -1,7 +1,15 @@
 import os
 import requests
+import logging
 import pandas as pd
 from io import BytesIO
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='{asctime} - {levelname} - {message}',
+    style='{',
+    datefmt='%Y-%m-%d %H:%M'
+)
 
 def export_dataframes_to_excel(file_name, dataframes, sheet_names):
     """
@@ -85,6 +93,7 @@ def load_csv_to_sharepoint(access_token, site_url, site_relative_url, file_name,
     response = requests.put(url, headers=headers, data=file_buffer)
 
     if response.status_code in [200, 201]:
-        print(f'Sharepoint sucessfully uploaded - file: "{file_name}". Status code: {response.status_code}.')
+        logging.info(f'Sharepoint sucessfully uploaded - file: "{file_name}". Status code: {response.status_code}.')
     else:
+        logging.error(f'Sharepoint upload failed - file: "{file_name}". Status code: {response.status_code} - {response.text}.')
         raise requests.HTTPError(f'Sharepoint upload failed - file: "{file_name}". Status code: {response.status_code} - {response.text}.')
