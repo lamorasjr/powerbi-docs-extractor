@@ -1,5 +1,5 @@
 # Power BI Catalog Extractor
-This project automates the documentation process of Power BI reports and semantic models by extracting metadata from multiple Power BI Workspaces, converting it into a .xlxs file and loading into a Sharepoint folder or local directory.
+This project automates the documentation process of Power BI reports and semantic models by extracting metadata from multiple Power BI Workspaces, converting it into a `.xlsx` file and loading into a Sharepoint folder or local directory.
 
 ## Key features:
 - `main.py` - main script to execute the whole process Power BI docs extraction.
