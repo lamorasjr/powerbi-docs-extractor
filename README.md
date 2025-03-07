@@ -44,7 +44,7 @@ cd powerbi-docs-extractor
 
 #### 1.3. Install the project dependencies
 
-**Option 1: Running with Pyenv and Poetry (Recommended)**
+**Option 1: Running with Pyenv and Poetry:**
 
 1. Install the required Python version Python with Pyenv:
 ```bash
@@ -71,8 +71,7 @@ poetry shell
 poetry run python src/dax_studio_setup.py
 ```
 
-**Option 2: Running with with pip**
-If you prefer not to use Poetry, you can install the dependencies using pip:
+**Option 2: Running with with pip:**
 
 1. Create the .venv 
 
