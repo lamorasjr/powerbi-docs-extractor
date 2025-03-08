@@ -68,7 +68,7 @@ def main():
         workspaces_datasets_list = resolve_workspaces_datasets_list(datasets_data, workspaces_data)
         datasets_info_data = extract_datasets_dax_info(PBI_TENANT_ID, PBI_CLIENT_ID, PBI_CLIENT_SECRET, workspaces_datasets_list)
 
-        # # Transform data and prepare for load
+        # Transform data and prepare for load
         logging.info("Transforming and preparing data for load...")
         workspaces_df = transform_workspaces(workspaces_data)    
         reports_df = transform_reports(reports_data, datasets_data, workspaces_data)
