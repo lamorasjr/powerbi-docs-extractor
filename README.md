@@ -13,7 +13,7 @@ This project automates the documentation process of Power BI reports and semanti
 
 ## Requirements
 - **Python 3.12 or greater**
-- Power BI workspace with at least **a Premium or a Fabric license**.
+- Power BI workspace with at least **a Premium** or a **Fabric license**.
 - **[Power BI Rest API access with Service Principal](https://learn.microsoft.com/en-us/power-bi/developer/embedded/embed-service-principal?tabs=azure-portal)**
   - Required scope for Power BI Rest API:
     - `Workspace.Read.All`
