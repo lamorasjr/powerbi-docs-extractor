@@ -116,5 +116,5 @@ python main.py
 * This project uses Dax Studio CMD from Dax Studio Portable version from [DaxStudio](https://github.com/DaxStudio/DaxStudio).
 
 
-## Contributing
+## Contributions
 Contributions are welcome! If you’d like to contribute to this project, please fork the repository, create a new branch, and submit a pull request with your changes. Make sure your code follows the project’s style guidelines and includes tests where appropriate. For larger changes, please open an issue first to discuss your ideas. Also, please review the [LICENSE](./LICENSE) file for the project’s licensing details.
