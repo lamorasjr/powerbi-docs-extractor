@@ -39,7 +39,7 @@ cd powerbi-docs-extractor
 1.2. Create the `.env` file with a copy of the content from `.env-example`
 * The `.env` file is required to run the project.
 * For a quick run - create the `.env` file in the root directory of the project.
-* Copy the content from .env-example.
+* Copy the content from `.env-example.`
 * Update the enviroments variables required to run this project.
 
 #### 1.3. Install the project dependencies
@@ -112,8 +112,9 @@ python main.py
 > To run this project and extract the output file locally, you must update both variables `LOCAL_EXTRACT`and `LOCAL_OUTPUT_DIR` in the `.env` file. 
 > As default `LOCAL_OUTPUT_DIR`is set as "N" and you must update to "Y".
 
-## Licensing
-...
+## Acknowledgements
+* This project uses Dax Studio CMD from Dax Studio Portable version from [DaxStudio](https://github.com/DaxStudio/DaxStudio).
+
 
 ## Contributing
-...
+Contributions are welcome! If you’d like to contribute to this project, please fork the repository, create a new branch, and submit a pull request with your changes. Make sure your code follows the project’s style guidelines and includes tests where appropriate. For larger changes, please open an issue first to discuss your ideas. Also, please review the [LICENSE](./LICENSE) file for the project’s licensing details.
