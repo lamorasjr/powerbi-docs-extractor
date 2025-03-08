@@ -100,7 +100,7 @@ SELECTCOLUMNS(
 	INFO.PARTITIONS(),
 	"table_id", [TableID],
 	"definition", [QueryDefinition],
-	"type", SWITCH( [Type], 4, "M", 2, "DAX", 7, "Interno" )
+	"type", SWITCH( [Type], 4, "M", 2, "DAX", 7, "Internal" )
 )
 
 VAR final_tables_view =
